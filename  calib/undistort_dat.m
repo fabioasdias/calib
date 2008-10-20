@@ -1,55 +1,57 @@
-function undistort_dat(origem,destino,nome_clb,computa_cal)
-% undistort_dat(origem,destino,nome_clb,computa_cal)
-%origem: nome do arquivo .dat original - string
-%destino: nome do arquivo .dat de destino - string
-%nome_clb: Nome do arquivo de calibracao correspondente
-%computa_cal: Devo computar a calibração mesmo se o arquivo .cal existir? 1/0
-%usa os arquivos camXim.txt camXref.txt ou camX.cal
+function undistort_dat(original,new_dat,name_clb,compute_calibration)
+% undistort_dat(original,new_dat,name_clb,compute_calibration)
+%original: filename of the .dat original - string
+%new_dat:      filename of the new_dat .dat - string
+%name_clb: clb calibration file
+%compute_calibration: 0/1 forces calibration calculation
 
-%Caso queira plotar os pontos e comparar faça esta variavel =1;
-mostra=0;
-
-
-%le o arquivo de origem
-if (exist(origem,'file'))
-    dat=textread(origem);
+option_show=input('Plot the corrected points? []=no ','s');
+if (~isempty(option_show))
+    show_points=1;
 else
-    dat=escolhe_graf('dat');
+    show_points=0;
 end
 
-%abre o arquivo de destino
-f=fopen(destino,'w');
+%reads the original file
+if (exist(original,'file'))
+    dat=textread(original);
+else
+    %or tries another one
+    dat=textread(escolhe_graf('dat'));
+end
+
+%opens the new_dat file
+f=fopen(new_dat,'w');
 
 
-%realiza a calibração da camera
-calib=carrega_camera(nome_clb,computa_cal)
+%loads the camera calibration
+calib=load_calibration(name_clb,compute_calibration,1);
 
-%sequencia para exibicao de resultados
-if (mostra==1)
-    figure(1)
+%preparing points figure
+if (show_points==1)
+    figure
     hold on
 end
 
-%iterando nos frames
+%for each frame
 for frame=1:size(dat,1)
-    %mantendo a numeracao original dos pontos
-    pontos_corrigidos(frame,1)=dat(frame,1);
-    %iterando nos pontos
+    %keeping the original frame number
+    corrected_points(frame,1)=dat(frame,1);
+    %for each point
     for coluna=1:(size(dat,2)-1)/2
-        %efetuando a correção
-        pontos_corrigidos(frame,2*coluna:2*coluna+1)=corrige_ponto(calib,[dat(frame,2*coluna);dat(frame,2*coluna+1)]);
-        %novamente,somente para exibição, antes X depois da correção
-        if (mostra==1)
+        %undistort
+        corrected_points(frame,2*coluna:2*coluna+1)=undistort_point(calib,[dat(frame,2*coluna);dat(frame,2*coluna+1)]);
+        %displays the data
+        if (show_points==1)
             plot(dat(frame,2*coluna),dat(frame,2*coluna+1),'xred');
-            plot(pontos_corrigidos(frame,2*coluna),pontos_corrigidos(frame,2*coluna+1),'oblue');
+            plot(corrected_points(frame,2*coluna),corrected_points(frame,2*coluna+1),'oblue');
         end
     end
-    %vamos salvar a linha processada
+    %saving the results in the new .dat file
     for c=1:size(dat,2)
-        fprintf(f,' %6.6d',pontos_corrigidos(frame,c));
+        fprintf(f,' %6.6d',corrected_points(frame,c));
     end
-    %pulando linha no final
+    %to keep the defined format
     fprintf(f,'\n');
 end
-%se nao fechar o arquivo nao funciona
 fclose(f);

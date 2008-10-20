@@ -1,4 +1,4 @@
-function [KK RT k]=converte_vet_calib(vetor)
+function [KK RT k]=convert_vet_calib(vetor)
 %function [KK RT k p s]=converte_vet_calib(vetor)
 
 %% compoe a K
