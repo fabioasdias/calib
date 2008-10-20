@@ -1,7 +1,8 @@
-function calib=load_calibration(name,calculate)
+function calib=load_calibration(name,calculate,radial)
 %function calib=load_calibration(name,calculatete)
 %name=filename of calibration. If '', uses pick('clb')
-%calculatete: forces re-calculatetion even if the file exists
+%calculate: forces re-calculatetion even if the file exists
+%radial : 0/1 uses or not the radial coefficients
 %Returns
 %P: projection matrix (DLT)
 %KK: 3x3 intrinsic matrix
@@ -56,9 +57,10 @@ if (calculate==1)
     L=read_dat_dvideo(name_dat);
     [F L]=convert_calib_dvideo(F,L);
 
-    calib=calibration(F,L);
+    %performs the calibration
+    calib=calibration(F,L,radial);
 else
-
+    %loading saved results
     K=fscanf(f,'%e',9);
     RT=fscanf(f,'%e',12);
 	calib.KK=unstack_matrix(K,3,3);
@@ -67,16 +69,10 @@ else
     calib.T=calib.RT(:,4);
     calib.P=calib.KK*calib.RT;
     calib.dir.k=fscanf(f,'%e %e\n',2);
-%    calib.dir.p=fscanf(f,'%e %e\n',2);
-%    calib.dir.s=fscanf(f,'%e %e\n',2);
-
     calib.inv.k=fscanf(f,'%e %e\n',2);
-%    calib.inv.p=fscanf(f,'%e %e\n',2);
-%    calib.inv.s=fscanf(f,'%e %e\n',2);
-
     fclose(f);
 end
-%[calib.KK,calib.R]=rq(calib.P(1:3,1:3));
+%additional calculations
 calib.KKi=pinv(calib.KK);
 calib.Ri=pinv(calib.R);
 calib.c=-calib.Ri*calib.KKi*calib.P(:,4);
