@@ -6,7 +6,8 @@ function [KK kc]=wrapper_calculate_calib(F,L,imagem)
 %http://research.graphicon.ru/calibration/gml-matlab-camera-calibration-too
 %lbox.html
 addpath('lib/');
-
+KK=[];
+kc=[];
 if ((size(F,2)/3)~=(size(L,2)/2))
     error('Incompatible vector size. Wrong number of sample images.');
 end
