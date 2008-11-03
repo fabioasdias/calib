@@ -8,3 +8,4 @@ To make the toolbox functional:
   * Type _calib_ in the matlab command prompt, to open the principal window:
 
 http://fabio.dias.googlepages.com/calib_inicial.png
+
