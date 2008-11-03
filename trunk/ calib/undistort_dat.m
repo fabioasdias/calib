@@ -39,12 +39,16 @@ for frame=1:size(dat,1)
     corrected_points(frame,1)=dat(frame,1);
     %for each point
     for coluna=1:(size(dat,2)-1)/2
-        %undistort
-        corrected_points(frame,2*coluna:2*coluna+1)=undistort_point(calib,[dat(frame,2*coluna);dat(frame,2*coluna+1)]);
-        %displays the data
-        if (show_points==1)
-            plot(dat(frame,2*coluna),dat(frame,2*coluna+1),'xred');
-            plot(corrected_points(frame,2*coluna),corrected_points(frame,2*coluna+1),'oblue');
+        if ((dat(frame,2*coluna)~=-1)&&(dat(frame,2*coluna+1)~=-1))
+            %undistort
+            corrected_points(frame,2*coluna:2*coluna+1)=undistort_point(calib,[dat(frame,2*coluna);dat(frame,2*coluna+1)]);
+            %displays the data
+            if (show_points==1)
+                plot(dat(frame,2*coluna),dat(frame,2*coluna+1),'xred');
+                plot(corrected_points(frame,2*coluna),corrected_points(frame,2*coluna+1),'oblue');
+            end
+        else
+            corrected_points(frame,2*coluna:2*coluna+1)=-1;
         end
     end
     %saving the results in the new .dat file
