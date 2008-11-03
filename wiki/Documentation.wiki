@@ -1,0 +1,10 @@
+#summary Main documentation page for the project
+
+= Getting started =
+To make the toolbox functional:
+  * Download it from the downloads page or checkout the svn,
+  * Unzip it to any directory,
+  * Add the main directory and the lib and etc directories to the matlab path,
+  * Type _calib_ in the matlab command prompt, to open the principal window:
+
+http://fabio.dias.googlepages.com/calib_inicial.png
