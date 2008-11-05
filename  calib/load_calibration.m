@@ -16,8 +16,6 @@ function calib=load_calibration(name,calculate,radial)
 %Recognition, 41(2):607–615, February 2008.
 %(we do not use the proposed method, but the explained in the intro)
 
-addpath('etc/');
-
 if  (calculate==0)
     %empty name == pick
     if (isempty(name))
