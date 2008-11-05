@@ -13,9 +13,18 @@ if (clb==0)
     dvideo=fopen([name '.cal'],'w');
     Pn=stack_matrix(calib.P);
     Pd=Pn/Pn(12);
-    for i=1:12
-        fprintf(dvideo,'%6.6f ',Pd(i));
-    end
+    fprintf(dvideo,'%6.6g ',Pd(1));
+    fprintf(dvideo,'%6.6g ',Pd(5));
+    fprintf(dvideo,'%6.6g ',Pd(9));
+    fprintf(dvideo,'%6.6g ',Pd(2));
+    fprintf(dvideo,'%6.6g ',Pd(6));    
+    fprintf(dvideo,'%6.6g ',Pd(10));
+    fprintf(dvideo,'%6.6g ',Pd(3));
+    fprintf(dvideo,'%6.6g ',Pd(7));
+    fprintf(dvideo,'%6.6g ',Pd(11));
+    fprintf(dvideo,'%6.6g ',Pd(4));
+    fprintf(dvideo,'%6.6g ',Pd(8));
+
     fclose(dvideo);
     return;
 end

@@ -53,7 +53,7 @@ for frame=1:size(dat,1)
     end
     %saving the results in the new .dat file
     for c=1:size(dat,2)
-        fprintf(f,' %6.6d',corrected_points(frame,c));
+        fprintf(f,' %6.6g',corrected_points(frame,c));
     end
     %to keep the defined format
     fprintf(f,'\n');

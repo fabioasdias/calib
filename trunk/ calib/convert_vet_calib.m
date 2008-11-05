@@ -4,7 +4,7 @@ function [KK RT k]=convert_vet_calib(vetor)
 %% compoe a K
 %[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);mr;teta;phi;T;inicializa_k(Kct)];
 
-k=vetor(11:12);
+%k=vetor(11:12);
 
 KK=[vetor(1) vetor(2) vetor(3); 0 vetor(4) vetor(5);0 0 vetor(6)];
 %% compoe os coeficientes de distorcao

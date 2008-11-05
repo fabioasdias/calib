@@ -46,38 +46,42 @@ else
     disp('Using DLT - P');
     [K R T]=calibration_dlt(F,L);
 end
-    
 
-%% Gibbs vector for rotation
-r=rodrigues(R);
-[teta phi mr]=cart2sph(r(1),r(2),r(3));
 
-%% Direct model (3D -> image)
-%[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);mr;teta;phi;T;k1;k2];
-if (radial==1)
-    x0=[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);mr;teta;phi;T;inicializa_k(Kct)];
-else
-    x0=[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);mr;teta;phi;T];%;inicializa_k(Kct)];
-end
-    
-
-[aux fval exitflag output] = fminsearch(@fcn_dir,x0,optimset('MaxIter',10000,'MaxFunEvals',10000,'TolX',1e-8,'LevenbergMarquardt','on'));
-
-%% recompor as matrizes para o resultado
 if (radial==0)
-    aux=[aux' 0 0]';
+    disp('Using DLT - P');
+    [calib.KK calib.R calib.T]=calibration_dlt(F,L);
+    calib.RT=[calib.R calib.T];
+    calib.Ri=pinv(R);
+    calib.dir.k=[0 0];
+    calib.P=calib.KK*calib.RT;
+else
+    
+    %% Gibbs vector for rotation
+    r=rodrigues(R);
+    [teta phi mr]=cart2sph(r(1),r(2),r(3));
+
+    %% Direct model (3D -> image)
+    %[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);mr;teta;phi;T;k1;k2];
+    x0=[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);mr;teta;phi;T;inicializa_k(Kct)];
+    [aux fval exitflag output] = fminsearch(@fcn_dir,x0,optimset('MaxIter',10000,'MaxFunEvals',10000,'TolX',1e-8,'LevenbergMarquardt','on'));
+
+    %% recompor as matrizes para o resultado
+    [calib.KK calib.RT calib.dir.k]=convert_vet_calib(aux);
+    calib.KKi=pinv(calib.KK);
+    calib.R=calib.RT(1:3,1:3);
+    calib.T=calib.RT(:,4);
+    calib.Ri=pinv(calib.R);
+    calib.P=calib.KK*calib.RT;
 end
-[calib.KK calib.RT calib.dir.k]=convert_vet_calib(aux);
-calib.KKi=pinv(calib.KK);
-calib.R=calib.RT(1:3,1:3);
-calib.T=calib.RT(:,4);
-calib.Ri=pinv(calib.R);
-calib.P=calib.KK*calib.RT;
 disp('P matrix');
 disp(calib.P);
-disp('K coefficients - Direct model');
-disp(calib.dir.k');
-disp(sprintf('Calibration square error: %g',fval));
+if (radial==1)
+    disp('K coefficients - Direct model');
+    disp(calib.dir.k');
+    disp(sprintf('Calibration square error: %g',fval));
+end
+
 
 
 

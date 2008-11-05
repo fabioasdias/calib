@@ -109,11 +109,13 @@ function undistort_Callback(hObject, eventdata, handles)
 % hObject    handle to undistort (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-addpath('etc/');
 %choosing the original dat file
 dat_file=pick('dat');
 %naming the new dat file
 new_file=input(sprintf('Please, enter the desired name for the corrected dat: []=%s',['corr_' dat_file]),'s');
+if (isempty(new_file))
+    new_file=['corr_' dat_file];
+end
 %which calibration to use?
 calib=pick('clb');
 %undistorts the dat
