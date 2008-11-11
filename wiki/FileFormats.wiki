@@ -12,7 +12,7 @@ A dat with N points and M frames must look like:
 
 ...
 
-M x,,M1,, y,,M1,, x,,M2,, y,,M2,, ... x,,MN,, y,,MN,,
+M-1 x,,M1,, y,,M1,, x,,M2,, y,,M2,, ... x,,MN,, y,,MN,,
 ----
 
 *Important*: The .dat files used for calibration may contain measures from different frames, but one measure for each point. *Do not* measure the same calibration point in two different frames.
@@ -25,7 +25,7 @@ A ref with N points must look like:
 
 ...
 
-N X,,N,, Y,,N,, Z,,0,,
+N-1 X,,N,, Y,,N,, Z,,N,,
 ----
 
 Preferably, the Z axis should be vertical.
