@@ -9,7 +9,9 @@ Each line represents a frame.
 A dat with N points and M frames must look like:
 ----
 0 x,,01,, y,,01,, x,,02,, y,,02,, ... x,,0N,, y,,0N,,
+
 ...
+
 M x,,M1,, y,,M1,, x,,M2,, y,,M2,, ... x,,MN,, y,,MN,,
 ----
 
@@ -20,7 +22,9 @@ Used to store 3D points, usually containing the reference for calibration.
 A ref with N points must look like:
 ----
 0 X,,0,, Y,,0,, Z,,0,,
+
 ...
+
 N X,,N,, Y,,N,, Z,,0,,
 ----
 
