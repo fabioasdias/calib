@@ -1,11 +1,58 @@
 #summary Main documentation page for the project
+#labels Featured,Phase-Deploy
 
-= Getting started =
+
+= Getting started - *Version r8* =
 To make the toolbox functional:
   * Download it from the downloads page or checkout the svn,
   * Unzip it to any directory,
   * Add the main directory and the lib and etc directories to the matlab path,
   * Type _calib_ in the matlab command prompt, to open the principal window:
+  * Make sure that all needed data files (.dat/.ref *not* the .m) are in the *current* matlab directory.
+  * *Do not* mix different versions of the toolbox!
 
 http://fabio.dias.googlepages.com/calib_inicial.png
+
+The first button, _Calibration_, performs the camera calibration, using 2 provided files:
+  # One .dat file, following the dvideo format (detailed in the formats page of the wiki), with one measure per point. *Do not* try to perform camera calibration with two different measures of the same point.
+  # One .ref file, containing the 3D coordinates of the real world calibration pattern.
+
+The user will be asked to provide each file, by selecting it on a list of all files with the same extension in the current directory. If only one file matches the criteria, it will be used automatically (a common case with the .ref file).
+
+After the file selection step, it begins the computation of the calibration, using J. Bouguet's toolbox if possible, as follows:
+
+{{{
+WARNING: No image size (nx,ny) available. Setting nx=640 and ny=480. If these are not the right values, change values manually.
+Aspect ratio optimized (est_aspect_ratio = 1) -> both components of fc are estimated (DEFAULT).
+Principal point optimized (center_optim=1) - (DEFAULT). To reject principal point, set center_optim=0
+Skew not optimized (est_alpha=0) - (DEFAULT)
+Distortion not fully estimated (defined by the variable est_dist):
+     Sixth order distortion not estimated (est_dist(5)=0) - (DEFAULT) .
+Initialization of the principal point at the center of the image.
+Initialization of the focal length to a FOV of 35 degrees.
+
+Main calibration optimization procedure - Number of images: 1
+Gradient descent iterations: 1...2...3...4...5...6...7...8...9...10...11...12...13...done
+Estimation of uncertainties...done
+
+
+Calibration results after optimization (with uncertainties):
+
+Focal Length:          fc = [ 869.32279   869.09949 ] ± [ 8.63953   8.50968 ]
+Principal point:       cc = [ 333.90951   225.45370 ] ± [ 17.84877   10.92310 ]
+Skew:             alpha_c = [ 0.00000 ] ± [ 0.00000  ]   => angle of pixel axes = 90.00000 ± 0.00000 degrees
+Distortion:            kc = [ -0.33259   0.16258   0.00036   0.00114  0.00000 ] ± [ 0.09242   0.38546   0.00213   0.00192  0.00000 ]
+Pixel error:          err = [ 0.53191   0.88099 ]
+
+Note: The numerical errors are approximately three times the standard deviations (for reference).
+
+
+Recommendation: Some distortion coefficients are found equal to zero (within their uncertainties).
+                To reject them from the optimization set est_dist=[1;0;1;1;0] and run Calibration
+
+DLT computation - RT
+Starting value for K1: ([]=-0.33259) 
+}}}
+
+
 
