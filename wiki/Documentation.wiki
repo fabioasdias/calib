@@ -3,6 +3,9 @@
 
 
 = Getting started - *Version r8* =
+
+http://calib.googlecode.com/files/CaLIBr8.zip
+
 To make the toolbox functional:
   * Download it from the downloads page or checkout the svn,
   * Unzip it to any directory,
