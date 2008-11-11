@@ -1,6 +1,8 @@
 #summary Format definition for the used files
 #labels Featured,Phase-Design
 
+<wiki:toc max_depth="2" />
+
 = File Format definitions =
 
 ==.dat==
