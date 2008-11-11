@@ -12,7 +12,6 @@
   * *Modified code => You are on your own.*
 
 =Bug reporting guidelines=
-  * If you is not listed as user/developer of the project, please mail fabio.dias@gmail.com or another owner of the  project.
   * Provide all relevant files. These files can be uploaded in the Issues section.
   * Provide detailed information about the actions taken leading to the bug and its result. The pattern provided by google code is a very good way to do this.
   * Save storage by using small file formats. *Do not* upload BMP files. Use .png ou .jpg instead. *Do not* upload .doc files, prefer .pdf or .txt files.
