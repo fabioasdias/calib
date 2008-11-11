@@ -1,0 +1,37 @@
+#summary Format definition for the used files
+#labels Featured,Phase-Design
+
+= File Format definitions =
+
+==.dat==
+Used to store 2D points in multiple frames.
+Each line represents a frame.
+A dat with N points and M frames must look like:
+----
+0 x,,01,, y,,01,, x,,02,, y,,02,, ... x,,0N,, y,,0N,,
+...
+M x,,M1,, y,,M1,, x,,M2,, y,,M2,, ... x,,MN,, y,,MN,,
+----
+
+*Important*: The .dat files used for calibration may contain measures from different frames, but one measure for each point. *Do not* measure the same calibration point in two different frames.
+
+==.ref==
+Used to store 3D points, usually containing the reference for calibration.
+A ref with N points must look like:
+----
+0 X,,0,, Y,,0,, Z,,0,,
+...
+N X,,N,, Y,,N,, Z,,0,,
+----
+
+Preferably, the Z axis should be vertical.
+
+==.cal==
+The .cal must follow the dvideo format (which will be published here soon).
+
+==.clb==
+Each item in separated lines:
+  # KK matrix: fprintf(f,'%e ',calib.KK');
+  # RT matrix: fprintf(f,'%e ',calib.RT');
+  # Direct model coeff: fprintf(f,'%e %e\n',calib.dir.k(1),calib.dir.k(2));
+  # Inverse model coeff: fprintf(f,'%e %e\n',calib.inv.k(1),calib.inv.k(2)); *OPTIONAL*
