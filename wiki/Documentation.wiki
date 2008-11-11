@@ -1,6 +1,7 @@
 #summary Main documentation page for the project
 #labels Featured,Phase-Deploy
 
+<wiki:toc max_depth="2" />
 
 = Getting started - *Version r8* =
 
