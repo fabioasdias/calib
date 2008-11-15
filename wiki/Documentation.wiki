@@ -63,10 +63,6 @@ Pixel error:          err = [ 0.53191   0.88099 ]
 
 Note: The numerical errors are approximately three times the standard deviations (for reference).
 
-
-Recommendation: Some distortion coefficients are found equal to zero (within their uncertainties).
-                To reject them from the optimization set est_dist=[1;0;1;1;0] and run Calibration
-
 DLT computation - RT
 Starting value for K1: ([]=-0.33259) 
 }}}
