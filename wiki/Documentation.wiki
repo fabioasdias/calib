@@ -3,9 +3,10 @@
 
 <wiki:toc max_depth="2" />
 
-= Getting started - *Version r8* =
+= Getting started - *Version r20* =
+Updated 15/11/2008
 
-http://calib.googlecode.com/files/CaLIBr8.zip
+http://calib.googlecode.com/files/CaLIBr20.zip
 
 To make the toolbox functional:
   * Download it from the downloads page or checkout the svn,
@@ -24,6 +25,14 @@ The first button, _Calibration_, performs the camera calibration, using 2 provid
   # One .ref file, containing the 3D coordinates of the real world calibration pattern.
 
 The user will be asked to provide each file, by selecting it on a list of all files with the same extension in the current directory. If only one file matches the criteria, it will be used automatically (a common case with the .ref file).
+
+If you need to import the intrinsic parameters from J.Bouguet's toolbox (chessboard), enter a non-empty string when asked:
+{{{
+Import calibration data from another toolbox? []=none 
+}}}
+
+Then select the desired .mat file.
+
 
 After the file selection step, it begins the computation of the calibration, using J. Bouguet's toolbox if possible, as follows:
 
