@@ -4,7 +4,7 @@
 
 = Forwarding gmail messages to another account =
 
-In this page you will learn how to make the messages delivered to a gmail account to be delivered in another mail. This should allow non-gmail users (which also do not want do change their address) a way to enter the mailing group and project.
+In this page you will learn how to make the messages delivered to a gmail account to be delivered in another mail. This should provide to non-gmail users (which also do not want do change their address) a way to enter the mailing group and project.
 
 ==Step 1: Creating a google account==
 
