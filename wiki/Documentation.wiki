@@ -3,20 +3,20 @@
 
 <wiki:toc max_depth="2" />
 
-= Getting started - *Version r22* =
+= Getting started - *Version r27* =
 Updated 15/11/2008
 
-http://calib.googlecode.com/files/CaLIBr22.zip
+http://calib.googlecode.com/files/CaLIBr27.zip
 
 To make the toolbox functional:
   * Download it from the downloads page or checkout the svn,
   * Unzip it to any directory,
-  * Add the main directory and the lib and etc directories to the matlab path,
+  * Add the main directory ~~and the lib and etc directories~~(not needed in releases>27) to the matlab path,
   * Type _calib_ in the matlab command prompt, to open the principal window:
   * Make sure that all needed data files (.dat/.ref *not* the .m) are in the *current* matlab directory.
   * *Do not* mix different versions of the toolbox!
 
-*Important* Adopt the Y axis (second value in each point) as _vertical_ axis. The third value (Z) must be the distance from the camera. Otherwise, J.B. Toolbox will not work properly.
+*Important:* Adopt the Y axis (second value in each point) as _vertical_ axis. The third value (Z) must be the distance from the camera. Otherwise, J.B. Toolbox will not work properly.
 
 http://fabio.dias.googlepages.com/calib_inicial.png
 
