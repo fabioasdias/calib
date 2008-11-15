@@ -1,6 +1,7 @@
 #summary ChangeLog of each released version of the toolbox
+#labels Phase-Requirements
 
-= r19 =
+= r27 =
 Added support for importing the intrinsic parameters computed with J. Bouguet's toolbox.
 
 
