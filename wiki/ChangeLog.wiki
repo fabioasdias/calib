@@ -1,0 +1,9 @@
+#summary ChangeLog of each released version of the toolbox
+
+= r19 =
+Added support for importing the intrinsic parameters computed with J. Bouguet's toolbox.
+
+
+= r6 = 
+First stable version.
+http://calib.googlecode.com/files/CaLIBr8.zip
