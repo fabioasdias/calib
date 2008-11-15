@@ -52,6 +52,11 @@ function calib_OpeningFcn(hObject, eventdata, handles, varargin)
 % handles    structure with handles and user data (see GUIDATA)
 % varargin   command line arguments to calib (see VARARGIN)
 
+base=fileparts(which('calib'));
+addpath([base '/etc']);
+addpath([base '/lib']);
+
+
 % Choose default command line output for calib
 handles.output = hObject;
 
@@ -78,6 +83,11 @@ function calibration_Callback(hObject, eventdata, handles)
 % hObject    handle to calibration (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+base=fileparts(which('calib'));
+addpath([base '/etc']);
+addpath([base '/lib']);
+
 dat_file=pick('dat');
 if (~isempty(dat_file))
     %first calibration
@@ -109,6 +119,10 @@ function undistort_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 %choosing the original dat file
+base=fileparts(which('calib'));
+addpath([base '/etc']);
+addpath([base '/lib']);
+
 dat_file=pick('dat');
 %naming the new dat file
 new_file=input(sprintf('Please enter the desired name for the corrected dat: []=%s',['corr_' dat_file]),'s');
