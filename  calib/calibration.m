@@ -10,7 +10,7 @@ tam=size(F,1);
 %% toolbox
 previous=nan;
 if (radial==1)
-    previous=input('Name of previous calibration data from another toolbox? []=none ','s');
+    previous=input('Import calibration data from another toolbox? []=none ','s');
 end
 if (~isempty(previous))&&(~isnan(previous))
     previous=pick('mat');
