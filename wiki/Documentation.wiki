@@ -63,7 +63,6 @@ Pixel error:          err = [ 0.53191   0.88099 ]
 
 Note: The numerical errors are approximately three times the standard deviations (for reference).
 
-DLT computation - RT
 Starting value for K1: ([]=-0.33259) 
 }}}
 
@@ -136,8 +135,6 @@ Pixel error:          err = [ 0.40765   0.85643 ]
 
 Note: The numerical errors are approximately three times the standard deviations (for reference).
 
-
-DLT computation - RT
 Using DLT - P
 Linear DLT!
 P matrix
