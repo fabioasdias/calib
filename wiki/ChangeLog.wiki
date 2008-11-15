@@ -8,7 +8,8 @@
 == Release 27 15/11/2008==
 Added support for importing the intrinsic parameters computed with J. Bouguet's toolbox.
 (since r17, with some minor bug corrections. Use r27)
+http://calib.googlecode.com/files/CaLIBr27.zip
+
 
 == Release 6 12/11/2008==
 First stable version.
-http://calib.googlecode.com/files/CaLIBr8.zip
