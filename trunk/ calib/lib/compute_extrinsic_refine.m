@@ -1,4 +1,4 @@
-function [omckk,Tckk,Rckk,JJ] = compute_extrinsic_refine(omc_init,Tc_init,x_kk,X_kk,fc,cc,kc,alpha_c,MaxIter,thresh_cond),
+function [omckk,Tckk,Rckk,JJ] = compute_extrinsic_refine(omc_init,Tc_init,x_kk,X_kk,fc,cc,kc,alpha_c,MaxIter,thresh_cond)
 
 %compute_extrinsic
 %

@@ -22,7 +22,7 @@ function varargout = calib(varargin)
 
 % Edit the above text to modify the response to help calib
 
-% Last Modified by GUIDE v2.5 20-Oct-2008 20:54:58
+% Last Modified by GUIDE v2.5 11-Nov-2008 01:40:58
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -78,7 +78,6 @@ function calibration_Callback(hObject, eventdata, handles)
 % hObject    handle to calibration (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-addpath('etc/')
 dat_file=pick('dat');
 if (~isempty(dat_file))
     %first calibration
@@ -94,7 +93,7 @@ if (~isempty(dat_file))
     calib_cal=load_calibration(['corr_' dat_file],1,0); %compute linear
     
     %preparing for save
-    prefix=input('Please, enter the name for the clb/cal files: (without extension) ','s');
+    prefix=input('Please enter the name for the clb/cal files: (without extension) ','s');
     if (~isempty(prefix))
         save_calibration(calib_clb,prefix,1);
         save_calibration(calib_cal,prefix,0);
@@ -112,7 +111,7 @@ function undistort_Callback(hObject, eventdata, handles)
 %choosing the original dat file
 dat_file=pick('dat');
 %naming the new dat file
-new_file=input(sprintf('Please, enter the desired name for the corrected dat: []=%s',['corr_' dat_file]),'s');
+new_file=input(sprintf('Please enter the desired name for the corrected dat: []=%s',['corr_' dat_file]),'s');
 if (isempty(new_file))
     new_file=['corr_' dat_file];
 end
@@ -122,5 +121,4 @@ calib=pick('clb');
 undistort_dat(dat_file,new_file,calib,0);
 %feedback
 disp('Done!');
-
 
