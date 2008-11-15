@@ -1,4 +1,4 @@
-function [xn] = normalize(x_kk,fc,cc,kc,alpha_c),
+function [xn] = normalize(x_kk,fc,cc,kc,alpha_c)
 
 %normalize
 %

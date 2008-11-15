@@ -17,7 +17,7 @@ if (exist(original,'file'))
     dat=textread(original);
 else
     %or tries another one
-    dat=textread(escolhe_graf('dat'));
+    dat=textread(pick('dat'));
 end
 
 %opens the new_dat file

@@ -9,7 +9,7 @@ buf=textread(nome_arq);
 
 %vamos excluir o primeiro número (nao sei para que serve!)
 buf=buf(:,2:end);
-tam=size(buf,2);
+tam=2*floor(size(buf,2)/2);
 buf(buf==-1)=nan;
 unico=nanmean(buf,1);
 unico(isnan(unico))=-1;

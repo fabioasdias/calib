@@ -1,5 +1,5 @@
-function [KK kc]=wrapper_calculate_calib(F,L,imagem)
-%function [KK kc]=wrapper_calculate_calib(F,L,imagem)
+function [KK kc mat]=wrapper_calculate_calib(F,L,imagem)
+%function [KK kc mat]=wrapper_calculate_calib(F,L,imagem)
 %KK -> intrinsic parameters
 %using  J. Bouguet's toolbox
 %http://www.vision.caltech.edu/bouguetj/calib_doc/ or
@@ -16,6 +16,8 @@ F=F';
 L=L';
 kc=0; %just to stop the warning
 
+est_alpha=1;
+est_dist=[1;1;0;0;0];
 
 n_ima=size(F,1)/3;
 ind_active=1:n_ima;
@@ -33,6 +35,13 @@ end
 go_calib_optim_iter;
 if (~exist('KK','var'))
     KK=[];
+else
+    if (~isempty(KK))
+        mat.fc=fc;
+        mat.cc=cc;
+        mat.kc=kc;
+        mat.alpha_c=alpha_c;
+    end
 end
 if (~exist('Kct','var'))
     Kct=[0;0];
