@@ -1,14 +1,14 @@
 #summary ChangeLog of each released version of the toolbox
 #labels Phase-Requirements
 
-=Changelog summary for each relase version=
+=Changelog summary for each release version=
 
-<wiki:toc max_depth="2" />
+<wiki:toc max_depth="3" />
 
-== r27 ==
+== Release 27 15/11/2008==
 Added support for importing the intrinsic parameters computed with J. Bouguet's toolbox.
 (since r17, with some minor bug corrections. Use r27)
 
-== r6 ==
+== Release 6 12/11/2008==
 First stable version.
 http://calib.googlecode.com/files/CaLIBr8.zip
