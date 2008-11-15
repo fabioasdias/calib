@@ -3,10 +3,10 @@
 
 <wiki:toc max_depth="2" />
 
-= Getting started - *Version r20* =
+= Getting started - *Version r22* =
 Updated 15/11/2008
 
-http://calib.googlecode.com/files/CaLIBr20.zip
+http://calib.googlecode.com/files/CaLIBr22.zip
 
 To make the toolbox functional:
   * Download it from the downloads page or checkout the svn,
