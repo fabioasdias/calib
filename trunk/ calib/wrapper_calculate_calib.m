@@ -7,6 +7,7 @@ function [KK kc mat]=wrapper_calculate_calib(F,L,imagem)
 %lbox.html
 KK=[];
 kc=[];
+mat=[];
 if ((size(F,2)/3)~=(size(L,2)/2))
     error('Incompatible vector size. Wrong number of sample images.');
 end
@@ -42,7 +43,4 @@ else
         mat.kc=kc;
         mat.alpha_c=alpha_c;
     end
-end
-if (~exist('Kct','var'))
-    Kct=[0;0];
 end

@@ -1,5 +1,5 @@
 function calib=load_calibration(name,calculate,radial)
-%function calib=load_calibration(name,calculatete)
+%function calib=load_calibration(name,calculate,radial)
 %name=filename of calibration. If '', uses pick('clb')
 %calculate: forces re-calculatetion even if the file exists
 %radial : 0/1 uses or not the radial coefficients
@@ -52,6 +52,9 @@ if (calculate==1)
         pp=find(name_dat=='.',1,'first');
     end
     F=textread(pick('ref'));
+    if (size(F,2)>4)
+        F=F(:,1:4);
+    end
     L=read_dat_dvideo(name_dat);
     [F L]=convert_calib_dvideo(F,L);
 
