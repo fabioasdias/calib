@@ -5,6 +5,12 @@ function im=projection(calib,real,radial)
 %calib: calibration (load_calibration)
 %radial: 0/1 uses radial coefficients
 
+try 
+    radial;
+catch
+    radial=1;
+end
+
 if (min(size(real))>=3)
     if (size(real,1)>size(real,2))
         real=real';
