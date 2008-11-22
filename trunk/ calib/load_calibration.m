@@ -15,6 +15,11 @@ function calib=load_calibration(name,calculate,radial)
 %J. Wang, F. Shia, J. Zhanga, and Y. Liu. A new calibration model of camera lens distortion. Pattern
 %Recognition, 41(2):607–615, February 2008.
 %(we do not use the proposed method, but the explained in the intro)
+try
+    radial;
+catch
+    radial=1;
+end
 
 if  (calculate==0)
     %empty name == pick
