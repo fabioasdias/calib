@@ -122,6 +122,7 @@ if (radial==1)
     disp(sprintf('Calibration square error: %g',fval));
 else
     calib.dir.k=[0 0];
+    calib.inv.k=[0 0];
 end
 
 

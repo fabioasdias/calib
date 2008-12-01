@@ -21,6 +21,12 @@ catch
     radial=1;
 end
 
+try
+    radial;
+catch
+    radial=1;
+end
+
 if  (calculate==0)
     %empty name == pick
     if (isempty(name))

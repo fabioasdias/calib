@@ -10,7 +10,7 @@ end
 
 if (clb==0)
     %% P para dvideo
-    dvideo=fopen([name '.cal'],'w');
+    dvideo=fopen([name '.cal'],'wt');
     Pn=stack_matrix(calib.P);
     Pd=Pn/Pn(12);
     fprintf(dvideo,'%6.6g ',Pd(1));
@@ -33,7 +33,7 @@ end
 % K
 % RT
 % k p s
-f=fopen([name '.clb'],'w');
+f=fopen([name '.clb'],'wt');
 
 %% KK
 fprintf(f,'%e ',calib.KK');
