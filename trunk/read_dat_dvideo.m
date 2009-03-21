@@ -1,4 +1,5 @@
 function L=read_dat_dvideo(nome_arq)
+%function L=read_dat_dvideo(nome_arq)
 %Esta função converte do formato do dvideo para o formato usado na funcao
 %calibra. Ainda contém -1 na saída.
 %Entrada: Nome do arquivo .dat
