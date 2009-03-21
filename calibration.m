@@ -22,6 +22,8 @@ else
 end
 Ll=L;
 
+full_otim=1;
+
 if (~isempty(K))
 
     Ll=normalize(Ll',mat.fc,mat.cc,mat.kc,mat.alpha_c)';
@@ -61,7 +63,7 @@ if (~isempty(K))
     calib.dir.k=[Kct(1) Kct(2)];
     calib.inv.k=-[Kct(1) Kct(2)];
     calib.P=calib.KK*calib.RT;
-
+    full_otim=0;
 else
     %lets try the old'n'good DLT
     disp('Using DLT - P');
@@ -81,17 +83,22 @@ if (radial==0)
     x0=[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);r;T;0;0];    
     fval=fcn_dir(x0);
 else
-
     %% Gibbs vector for rotation
     r=rodrigues(R);
     %    [teta phi mr]=cart2sph(r(1),r(2),r(3));
 
-    %% Direct model (3D -> image)
-    %[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);mr;teta;phi;T;k1;k2];
-    x0=[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);r;T;inicializa_k(Kct)];
-    [aux fval exitflag output] = fminsearch(@fcn_dir,x0,optimset('MaxIter',10000,'MaxFunEvals',10000,'TolX',1e-8,'LevenbergMarquardt','on'));
+    if (full_otim==1)
+        %% Direct model (3D -> image)
+        %[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);mr;teta;phi;T;k1;k2];
+        x0=[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);r;T;inicializa_k(Kct)];
+        [aux fval exitflag output] = fminsearch(@fcn_dir,x0,optimset('MaxIter',10000,'MaxFunEvals',10000,'TolX',1e-8,'LevenbergMarquardt','on'));
+    else
+        x0=[r;T;inicializa_k(Kct)];
+        [aux fval exitflag output] = fminsearch(@fcn_RT,x0,optimset('MaxIter',10000,'MaxFunEvals',10000,'TolX',1e-8,'LevenbergMarquardt','on'));
+        aux=[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);aux];
+    end
 
-    %% recompor as matrizes para o resultado
+    %% recompor as matrizes para o resultado        
     [calib.KK calib.RT calib.dir.k]=convert_vet_calib(aux);
     calib.KKi=pinv(calib.KK);
     calib.R=calib.RT(1:3,1:3);
@@ -122,7 +129,6 @@ if (radial==1)
     disp(sprintf('Calibration square error: %g',fval));
 else
     calib.dir.k=[0 0];
-    calib.inv.k=[0 0];
 end
 
 
@@ -141,10 +147,10 @@ end
     function sum_error=fcn_dir(x)
         sum_error=sum(sum( (projection(x,F,radial)-L').^2));
     end
-%     function sum_error=fcn_dir_ext(x)
-%         xl=[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);x];
-%         sum_error=sum(sum((projection(xl,F,radial)-L').^2));
-%     end
+     function sum_error=fcn_RT(x)
+         xl=[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);x];
+         sum_error=sum(sum((projection(xl,F,radial)-L').^2));
+     end
     function sum_error=fcn_inv(x)
         Fl=F';
         Fl(4,:)=1;

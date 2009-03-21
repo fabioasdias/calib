@@ -4,11 +4,7 @@ function im=projection(calib,real,radial)
 %real: 3D real world points
 %calib: calibration (load_calibration)
 %radial: 0/1 uses radial coefficients
-try 
-    radial;
-catch
-    radial=1;
-end
+
 try 
     radial;
 catch
