@@ -5,6 +5,9 @@
 
 <wiki:toc max_depth="3" />
 
+== Release 40 21/03/2009==
+Some issues related to r27 fixed. (The non linear opt. now only considers extrinsic parameters when using the intrinsic parameters computed with J. Bouguet's toolbox).
+
 == Release 27 15/11/2008==
 Added support for importing the intrinsic parameters computed with J. Bouguet's toolbox.
 (since r17, with some minor bug corrections. Use r27)
