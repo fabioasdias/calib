@@ -4,6 +4,8 @@
 =Changelog summary for each release version=
 
 <wiki:toc max_depth="3" />
+== Release 42 27/03/2009==
+Distortion coefficients removed from the optimization step when using intrinsic parameters computed with J. Bouguet's toolbox. 
 
 == Release 40 21/03/2009==
 Some issues related to r27 fixed. (The non linear opt. now only considers extrinsic parameters when using the intrinsic parameters computed with J. Bouguet's toolbox).
