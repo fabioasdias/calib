@@ -27,31 +27,6 @@ full_otim=1;
 if (~isempty(K))
 
     Ll=normalize(Ll',mat.fc,mat.cc,mat.kc,mat.alpha_c)';
-
-    %     tam=size(F,1);
-    %
-    %     A=zeros(2*tam,11);
-    %     B=zeros(2*tam,1);
-    %     disp('Linear DLT!');
-    %     for ii=1:tam
-    %         A(2*ii-1,:)=[F(ii,:) 1 0 0 0 0 -L(ii,1)*F(ii,:)];
-    %         B(2*ii-1)=L(ii,1);
-    %         A(2*ii  ,:)=[0 0 0 0 F(ii,:) 1 -L(ii,2)*F(ii,:)];
-    %         B(2*ii)=L(ii,2);
-    %     end
-    %
-    %     % 12 elements
-    %     X=[A\B;1];
-
-
-
-
-    %     aux=fminsearch(@fun_calib_RT,[0;0;0;1;1;1]);
-    %     R=rodrigues(aux(1:3));
-    %     T=aux(4:6);
-    %     RT=[R T];
-
-    %[omckk,Tckk,Rckk] = compute_extrinsic_init(x_kk,X_kk,fc,cc,kc,alpha_c)
     [omc T R]=compute_extrinsic_init(L',F',mat.fc,mat.cc,mat.kc,mat.alpha_c);
     [omc,T,R,JJ] = compute_extrinsic_refine(omc,T,L',F',mat.fc,mat.cc,mat.kc,mat.alpha_c,20,1E6);
 
@@ -93,9 +68,9 @@ else
         x0=[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);r;T;inicializa_k(Kct)];
         [aux fval exitflag output] = fminsearch(@fcn_dir,x0,optimset('MaxIter',10000,'MaxFunEvals',10000,'TolX',1e-8,'LevenbergMarquardt','on'));
     else
-        x0=[r;T;inicializa_k(Kct)];
+        x0=[r;T];
         [aux fval exitflag output] = fminsearch(@fcn_RT,x0,optimset('MaxIter',10000,'MaxFunEvals',10000,'TolX',1e-8,'LevenbergMarquardt','on'));
-        aux=[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);aux];
+        aux=[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);aux;Kct(1);Kct(2)];
     end
 
     %% recompor as matrizes para o resultado        
@@ -148,7 +123,7 @@ end
         sum_error=sum(sum( (projection(x,F,radial)-L').^2));
     end
      function sum_error=fcn_RT(x)
-         xl=[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);x];
+         xl=[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);x;Kct(1);Kct(2)];
          sum_error=sum(sum((projection(xl,F,radial)-L').^2));
      end
     function sum_error=fcn_inv(x)
