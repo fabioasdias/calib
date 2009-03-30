@@ -25,20 +25,25 @@ Ll=L;
 full_otim=1;
 
 if (~isempty(K))
-
-    Ll=normalize(Ll',mat.fc,mat.cc,mat.kc,mat.alpha_c)';
-    [omc T R]=compute_extrinsic_init(L',F',mat.fc,mat.cc,mat.kc,mat.alpha_c);
-    [omc,T,R,JJ] = compute_extrinsic_refine(omc,T,L',F',mat.fc,mat.cc,mat.kc,mat.alpha_c,20,1E6);
-
-    calib.R=R;
-    calib.T=T;
     calib.KK=K;
-    calib.RT=[calib.R calib.T];
-    calib.Ri=pinv(R);
     calib.dir.k=[Kct(1) Kct(2)];
     calib.inv.k=-[Kct(1) Kct(2)];
+    
+    tri=input('Using triod calibration object? []=no ','s');
+    if (isempty(tri))
+        Ll=normalize(Ll',mat.fc,mat.cc,mat.kc,mat.alpha_c)';
+        [omc T R]=compute_extrinsic_init(Ll',F',mat.fc,mat.cc,mat.kc,mat.alpha_c);
+        [omc,T,R,JJ] = compute_extrinsic_refine(omc,T,Ll',F',mat.fc,mat.cc,mat.kc,mat.alpha_c,20,1E6);        
+    else
+        [R T]=pose_approx(calib,L,F);
+    end
+    calib.R=R;
+    calib.T=T;
+    calib.RT=[calib.R calib.T];
+    calib.Ri=pinv(R);
     calib.P=calib.KK*calib.RT;
     full_otim=0;
+    
 else
     %lets try the old'n'good DLT
     disp('Using DLT - P');
