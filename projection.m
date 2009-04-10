@@ -5,9 +5,9 @@ function im=projection(calib,real,radial)
 %calib: calibration (load_calibration)
 %radial: 0/1 uses radial coefficients
 
-try 
-    radial;
-catch
+%%
+% if the parameter is not provided, assume 1
+if (~exist('radial','var'))
     radial=1;
 end
 
@@ -22,8 +22,10 @@ if (isstruct(calib))
     RT=calib.RT;
     KK=calib.KK;
     k=calib.dir.k;
+    p=calib.dir.p;
+    s=calib.dir.s;
 else
-    [KK RT k]=convert_vet_calib(calib);
+    [KK RT k p s]=convert_vet_calib(calib);
 end
 
 point=RT*real;
@@ -36,11 +38,8 @@ if (radial==1)
 
     u2v2=u.^2+v.^2;
 
-    du=k(1).*u.*u2v2+k(2).*u.*(u2v2).^2;
-    dv=k(1).*v.*u2v2+k(2).*v.*(u2v2).^2;
-    %optional for more distortion coefficients
-    %du=k(1).*u.*u2v2+k(2).*u.*(u2v2).^2+s(1).*u2v2+(p(1).*(3.*u.^2+v.^2)+2.*p(2).*u.*v);
-    %dv=k(1).*v.*u2v2+k(2).*v.*(u2v2).^2+s(2).*u2v2+(p(2).*(3.*v.^2+u.^2)+2.*p(1).*u.*v);
+    du=k(1).*u.*u2v2+k(2).*u.*(u2v2).^2+s(1).*u2v2+(p(1).*(3.*u.^2+v.^2)+2.*p(2).*u.*v);
+    dv=k(1).*v.*u2v2+k(2).*v.*(u2v2).^2+s(2).*u2v2+(p(2).*(3.*v.^2+u.^2)+2.*p(1).*u.*v);
 else
     du=0;
     dv=0;

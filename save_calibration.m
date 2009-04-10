@@ -44,12 +44,11 @@ fprintf(f,'%e ',calib.RT');
 fprintf(f,'\n');
 %direct model
 fprintf(f,'%e %e\n',calib.dir.k(1),calib.dir.k(2));
+fprintf(f,'%e %e\n',calib.dir.p(1),calib.dir.p(2));
+fprintf(f,'%e %e\n',calib.dir.s(1),calib.dir.s(2));
 
-%inverse model
-try
-    fprintf(f,'%e %e\n',calib.inv.k(1),calib.inv.k(2));
-catch
-    %just in case
-end
+fprintf(f,'%e %e\n',calib.inv.k(1),calib.inv.k(2));
+fprintf(f,'%e %e\n',calib.inv.p(1),calib.inv.p(2));
+fprintf(f,'%e %e\n',calib.inv.s(1),calib.inv.s(2));
 
 fclose(f);

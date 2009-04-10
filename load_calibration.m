@@ -15,9 +15,7 @@ function calib=load_calibration(name,calculate,radial)
 %J. Wang, F. Shia, J. Zhanga, and Y. Liu. A new calibration model of camera lens distortion. Pattern
 %Recognition, 41(2):607–615, February 2008.
 %(we do not use the proposed method, but the explained in the intro)
-try
-    radial;
-catch
+if (~exist('radial','var'))
     radial=1;
 end
 
@@ -75,7 +73,22 @@ else
     calib.T=calib.RT(:,4);
     calib.P=calib.KK*calib.RT;
     calib.dir.k=fscanf(f,'%e %e\n',2);
-    calib.inv.k=fscanf(f,'%e %e\n',2);
+    calib.dir.p=fscanf(f,'%e %e\n',2);
+    try 
+        calib.dir.s=fscanf(f,'%e %e\n',2);
+        
+        calib.inv.k=fscanf(f,'%e %e\n',2);
+        calib.inv.p=fscanf(f,'%e %e\n',2);
+        calib.inv.s=fscanf(f,'%e %e\n',2);
+    catch %#ok<CTCH>
+        %if it had a failure reading the further values, it's from an older
+        %version of the toolbox.
+        calib.inv.k=calib.dir.p;
+        calib.dir.p=[0;0];
+        calib.dir.s=[0;0];
+        calib.inv.p=[0;0];
+        calib.inv.s=[0;0];
+    end
     fclose(f);
 end
 %additional calculations
