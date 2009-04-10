@@ -5,15 +5,17 @@
 
   * The most important: *EVERY BUG MUST BE REPORTED IN THE ISSUES PAGE*. By doing this, another users will be aware of the bug and one of the developers can fix it.
 
-  * The *only oficial source* of the toolbox is the *download* section of google code. *Do not* copy the files from another person/source, because it may have been altered. 
+  * The *only official source* of the toolbox is the *download* section of Google code. *Do not* copy the files from another person/source, because it may have been altered. 
 
   * If a user fixes a bug in the toolbox, the modified code shall be posted in the issues area, as reply/comment to the corresponding bug. A developer will check the code and, if everything is fine, modify the code and release a new version. *Do not* provide these modifications for another users.
+
+  * Do not create *multiple* versions of the *same* operations for different situations. Each piece of code must be as generic as possible. Code redundancy increases the effort of code maintenance.
 
   * *Modified code => You are on your own.*
 
 =Bug reporting guidelines=
   * Provide all relevant files. These files can be uploaded in the Issues section.
-  * Provide detailed information about the actions taken leading to the bug and its result. The pattern provided by google code is a very good way to do this.
+  * Provide detailed information about the actions taken leading to the bug and its result. The pattern provided by Google code is a very good way to do this.
   * Save storage by using small file formats. *Do not* upload BMP files. Use .png ou .jpg instead. *Do not* upload .doc files, prefer .pdf or .txt files.
 
 =Coding guidelines=
