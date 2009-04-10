@@ -7,8 +7,9 @@
 
 == Release 46 10/04/2009==
 Major changes:
-  * New method to estimate R and T when using chess calibration. A little more simple and (hopefully) robust.
-  * Modifications in the error functions of the optimizations. Added a factor in the distortions to reduce the impact of small variations. (k1 usually is between 1 and -1, T is usually bigger than 100, we had to "normalize" the search space.
+  * New method to *estimate R and T* when using chess calibration. A little more simple and (hopefully) robust.
+  * Modifications in the error functions of the optimizations. Added a *factor in the distortions* to reduce the impact of small variations. As k1 usually is between 1 and -1 and T, for instance, is usually bigger than 100, we had to "normalize" the search space. This change is _internal_, does not affect the method, only improves the result (the search is better guided).
+  * Supports *new distortion parameters* (decentering and thin prism): p (aka as k(3:4) from J. Bouguet's toolbox) and s. 
 
 == Release 44 30/03/2009==
 Added a new algorithm to estimate extrinsic parameters when using a new, 9 points only, calibration pattern.
