@@ -5,6 +5,11 @@
 
 <wiki:toc max_depth="3" />
 
+== Release 46 10/04/2009==
+Major changes:
+* New method to estimate R and T when using chess calibration. A little more simple and (hopefully) robust.
+* Modifications in the error functions of the optimizations. Added a factor in the distortions to reduce the impact of small variations. (k1 usually is between 1 and -1, T is usually bigger than 100, we had to "normalize" the search space.
+
 == Release 44 30/03/2009==
 Added a new algorithm to estimate extrinsic parameters when using a new, 9 points only, calibration pattern.
 
