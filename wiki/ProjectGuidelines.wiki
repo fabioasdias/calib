@@ -12,12 +12,14 @@
   * Do not create *multiple* versions of the *same* operations for different situations. Each piece of code must be as generic as possible. Code redundancy increases the effort of code maintenance.
 
   * *Modified code => You are on your own.*
-
-=Bug reporting guidelines=
+ ----
+=Bug reporting/Suggest functionality guidelines=
   * Provide all relevant files. These files can be uploaded in the Issues section.
   * Provide detailed information about the actions taken leading to the bug and its result. The pattern provided by Google code is a very good way to do this.
   * Save storage by using small file formats. *Do not* upload BMP files. Use .png ou .jpg instead. *Do not* upload .doc files, prefer .pdf or .txt files.
+  * Details *are* relevant. When suggest new functionalities (or improvements on existing ones), provide as much information as possible.
 
+----
 =Coding guidelines=
 
   * The code must be well commented, with all relevant information. Example:
