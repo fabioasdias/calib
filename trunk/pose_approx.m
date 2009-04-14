@@ -37,18 +37,21 @@ nc.RT=[nc.R nc.T];
 xu=projection(nc,X,1); %updating values
 
 %% finding rotation matrix R (and adapting T)
-
-aux=fminsearch(@fcn_RT,[0;0;MULT*pi;nc.T]);
+try
+    [aux fval]=patternsearch(@fcn_RT,[0;0;MULT*pi;nc.T]);
+catch %optimization toolbox not present
+    [aux fval]=fminsearch(@fcn_RT,[0;0;MULT*pi;nc.T]);
+end
 aux(1:3)=aux(1:3)/MULT;
 nc.R=mountMatrix(aux(1),aux(2),aux(3));
 nc.T=aux(4:6);
-nc.RT=[nc.R aux(4:6)];
+nc.RT=[nc.R nc.T];
 
 xu=projection(nc,X,1);
 
 
 %% plotting results
-pl=input('Plot the reprojected points with the ESTIMATIVE of RT? []=no ','s');
+pl=input(sprintf('Plot the reprojected points with the ESTIMATIVE of RT? (error=%d) []=no ',fval),'s');
 if (~isempty(pl))
     figure,
     plot(xu(1,:),xu(2,:),'or');
@@ -64,25 +67,8 @@ T=nc.T;
     function sum_error=fcn_RT(vector)
         nc.R=mountMatrix(vector(1)/MULT,vector(2)/MULT,vector(3)/MULT);
         nc.T=vector(4:6);
-        nc.RT=[nc.R vector(4:6)];
+        nc.RT=[nc.R nc.T];
         sum_error=sum(sum( (projection(nc,X,1)-x).^2));
-    end
-
-
-    %Given three angles, returns the rotation matrix
-    function R=mountMatrix(a1,a2,a3)
-        R1=[1         0         0        ;...
-            0         cos(a1)  -sin(a1)  ;...
-            0         sin(a1)   cos(a1)  ];
-        
-        R2=[ cos(a2)   0         sin(a2)  ;...
-             0         1         0        ;...
-            -sin(a2)   0         cos(a2) ];
-        
-        R3=[cos(a3)  -sin(a3)   0        ;...
-            sin(a3)   cos(a3)   0        ;...
-            0         0         1        ];
-        R=R1*R2*R3;
     end
 
     %error function for T1 e T2 optimization

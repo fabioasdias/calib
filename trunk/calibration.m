@@ -35,8 +35,12 @@ if (radial==1)
         end
         
         [K Kct mat]=wrapper_calculate_calib(F,L,distortions);
-        
     end
+     %the order of p parameters is changed in the toolbox
+    kct_aux=Kct(4);
+    Kct(4)=Kct(3);
+    Kct(3)=kct_aux;
+
 end
 Ll=L;
 
@@ -47,7 +51,7 @@ if (~isempty(K))
     calib.dir.k=[Kct(1) Kct(2)];
     calib.dir.p=[Kct(3) Kct(4)];
     calib.dir.s=[0 0];
-    calib.inv.k=-[Kct(1) Kct(2)];
+    calib.inv.k=[Kct(1) Kct(2)];
     calib.inv.p=[Kct(3) Kct(4)];
     calib.inv.s=[0 0];
     if (isempty(previous))
@@ -229,7 +233,7 @@ end
 
 
      function sum_error=fcn_RT(x)
-         xl=[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);x;Kct(1);Kct(2);0;0;0;0];
+         xl=[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);x;Kct(1:4);0;0];
          sum_error=sum(sum((projection(xl,F,radial)-L').^2));
      end
  
@@ -260,7 +264,7 @@ end
         if (isempty(k1))
             k=[kct(1);0];
         else
-            k=[k1;0];
+            k=[k1;0]; 
         end
         vetor=MULT*k;
     end
