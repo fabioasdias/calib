@@ -5,6 +5,10 @@
 
 <wiki:toc max_depth="3" />
 
+== Release 54 14/04/2009==
+  * The chess toolbox uses the p distortion parameters in other order than us. Fixed.
+  * Correction in the projection equation (undistort_point.m) of inverse model. Now subtracts the distortion instead of adding.
+
 == Release 46 10/04/2009==
 Major changes:
   * New method to *estimate R and T* when using chess calibration. A little more simple and (hopefully) robust.
