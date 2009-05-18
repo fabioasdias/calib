@@ -59,14 +59,6 @@ if (~isempty(K))
     else
         full_otim=0;
     end
-%     if (isempty(tri))
-%         
-%         %Ll=normalize(Ll',mat.fc,mat.cc,mat.kc,mat.alpha_c)';
-%         [omc T R]=compute_extrinsic_init(Ll',F',mat.fc,mat.cc,mat.kc,mat.alpha_c);
-%         [omc,T,R,JJ] = compute_extrinsic_refine(omc,T,Ll',F',mat.fc,mat.cc,mat.kc,mat.alpha_c,20,1E6);        
-%     else
-%         [R T]=pose_approx(calib,L,F);
-%     end
     [R T]=pose_approx(calib,L,F);
     calib.R=R;
     calib.T=T;
@@ -107,23 +99,24 @@ else
         %% Direct model (3D -> image)
         if (isempty(kps)||(kps==0))
             %[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);mr;teta;phi;T;k1;k2];
-            x0=[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);r;T;inicializa_k(Kct)];        
+            x0=[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);r;T;inicializa_k(Kct)*MULT];        
             [aux  fval] = fminsearch(@fcn_dir_k,x0,optimset('MaxIter',10000,'MaxFunEvals',10000,'TolX',1e-16,'LevenbergMarquardt','on'));
             aux=[aux;0;0;0;0];
         else
             if (kps==1)
                 %p also
-                x0=[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);r;T;inicializa_k(Kct);inicializa_p(Kct)];
+                x0=[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);r;T;inicializa_k(Kct)*MULT;inicializa_p(Kct)*MULT];
                 [aux  fval]= fminsearch(@fcn_dir_kp,x0,optimset('MaxIter',10000,'MaxFunEvals',10000,'TolX',1e-16,'LevenbergMarquardt','on'));
                 aux=[aux;0;0];
             else
                 if (kps==2)
                     % p & s
-                    x0=[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);r;T;inicializa_k(Kct);inicializa_p(Kct);0;0];
+                    x0=[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);r;T;inicializa_k(Kct)*MULT;inicializa_p(Kct)*MULT;0;0];
                     [aux  fval] = fminsearch(@fcn_dir_kps,x0,optimset('MaxIter',10000,'MaxFunEvals',10000,'TolX',1e-16,'LevenbergMarquardt','on'));
                 end
             end
         end
+        aux(13:18)=aux(13:18)/MULT;
                 
     else
         x0=[r;T];
@@ -132,7 +125,6 @@ else
     end
 
     %% rebuilding the matrix of the result
-    aux(13:18)=aux(13:18)/MULT;
     [calib.KK calib.RT calib.dir.k calib.dir.p calib.dir.s]=convert_vet_calib(aux);
     calib.KKi=pinv(calib.KK);
     calib.R=calib.RT(1:3,1:3);
@@ -161,16 +153,43 @@ disp(sprintf('Calibration square error: %g',fval));
 
 %% Inverse model (image -> image)
 if (radial==1)
-
     disp('Starting inverse model');
-    Fl=F';
-    Fl(4,:)=1;
-    xup=calib.P*(Fl);
-    xup=xup(1:2,:)./repmat(xup(3,:),[2 1]);
-
+    
+    %if using chess, generate more points to 'fit'. disabled now to use
+    %oulu model (temporary)
+    if (full_otim==0)
+        calib.inv=calib.dir;
+        calib.inv.k(1)=NaN; % flagging the model
+        
+        
+%         wantToChange=1;
+%         while (~isempty(wantToChange))
+%             for ii=1:3
+%                 lower(ii)=input(sprintf('Lower value to be considered in the %d coordinate (same unit as .ref): ',ii));
+%                 upper(ii)=input(sprintf('Upper value to be considered in the %d coordinate (same unit as .ref): ',ii));
+%                 step(ii)=input(sprintf('Step to be considered in the %d coordinate (same unit as .ref): ',ii));
+%             end
+%             [F1 F2 F3]=meshgrid(lower(1):step(1):upper(1),lower(2):step(2):upper(2),lower(3):step(3):upper(3));
+%             F1=reshape(F1,[1 numel(F1)]);
+%             F2=reshape(F2,[1 numel(F2)]);
+%             F3=reshape(F3,[1 numel(F3)]);
+%             
+%             Fl=[F1; F2; F3];
+%             Ll=projection(calib,Fl,1);
+%             figure,plot(Ll(1,:),Ll(2,:),'xred'),hold on,grid on
+%             plot(L(:,1),L(:,2),'oblue');
+%             title('blue: Original points / red: Generated points');
+%             wantToChange=input('Proceed or change the limits? []=proceed ','s');
+%         end
+    else %remove this else when removing oulu
+        Fl=F';
+        Fl(4,:)=1;
+        xup=calib.P*(Fl);
+        xup=xup(1:2,:)./repmat(xup(3,:),[2 1]);
+        
         if (isempty(kps)||(kps==0))
             %[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);mr;teta;phi;T;k1;k2];
-            x0=-inicializa_k(Kct);        
+            x0=-inicializa_k(Kct);
             [aux  fval] = fminsearch(@fcn_inv_k,x0,optimset('MaxIter',10000,'MaxFunEvals',10000,'TolX',1e-16,'LevenbergMarquardt','on'));
             aux=[aux;0;0;0;0];
         else
@@ -187,16 +206,16 @@ if (radial==1)
                 end
             end
         end
-
-    aux=aux/MULT;
-    calib.inv.k=aux(1:2);
-    calib.inv.p=aux(3:4);
-    calib.inv.s=aux(5:6);
-    disp('coefficients - Inverse model');
-    disp('k'); disp(calib.inv.k')
-    disp('p'); disp(calib.inv.p')
-    disp('s'); disp(calib.inv.s')
-    disp(sprintf('Calibration square error: %g',fval));
+        
+        calib.inv.k=aux(1:2);
+        calib.inv.p=aux(3:4);
+        calib.inv.s=aux(5:6);
+        disp('coefficients - Inverse model');
+        disp('k'); disp(calib.inv.k')
+        disp('p'); disp(calib.inv.p')
+        disp('s'); disp(calib.inv.s')
+        disp(sprintf('Calibration square error: %g',fval));
+    end
 else
     calib.dir.k=[0 0];
 end
@@ -238,26 +257,26 @@ end
      end
  
   function sum_error=fcn_inv_k(x)
-        calib.inv.k=x(1:2)/MULT;
+        calib.inv.k=x(1:2);
         calib.inv.p=[0;0];
         calib.inv.s=[0;0];
-        sum_error=sum(sum((undistort_point(calib,L)-xup).^2));
+        sum_error=sum(sum((undistort_point(calib,Ll)-xup).^2));
     end
    
  
   function sum_error=fcn_inv_kp(x)
-        calib.inv.k=x(1:2)/MULT;
-        calib.inv.p=x(3:4)/MULT;
+        calib.inv.k=x(1:2);
+        calib.inv.p=x(3:4);
         calib.inv.s=[0;0];
-        sum_error=sum(sum((undistort_point(calib,L)-xup).^2));
+        sum_error=sum(sum((undistort_point(calib,Ll)-xup).^2));
     end
    
  
     function sum_error=fcn_inv_kps(x)
-        calib.inv.k=x(1:2)/MULT;
-        calib.inv.p=x(3:4)/MULT;
-        calib.inv.s=x(5:6)/MULT;
-        sum_error=sum(sum((undistort_point(calib,L)-xup).^2));
+        calib.inv.k=x(1:2);
+        calib.inv.p=x(3:4);
+        calib.inv.s=x(5:6);
+        sum_error=sum(sum((undistort_point(calib,Ll)-xup).^2));
     end
     function vetor= inicializa_k(kct)
         k1=input(['Starting value for K1: ([]=' num2str(kct(1)) ') ']);
@@ -266,10 +285,10 @@ end
         else
             k=[k1;0]; 
         end
-        vetor=MULT*k;
+        vetor=k;
     end
     function vetor= inicializa_p(kct)
-        vetor=MULT*kct(3:4);
+        vetor=kct(3:4);
     end
 
 end
