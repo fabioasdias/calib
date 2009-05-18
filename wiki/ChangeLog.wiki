@@ -1,9 +1,12 @@
 #summary ChangeLog of each released version of the toolbox
-#labels Phase-Requirements
+#labels Phase-Requirements,Featured
 
 =Changelog summary for each release version=
 
 <wiki:toc max_depth="3" />
+
+== Release 56 18/05/2009==
+Bug fix. One multiplication misused in one of the cases. Bug introduced in r46, only occurs when using J.B.'s toolbox method.
 
 == Release 54 14/04/2009==
   * The chess toolbox uses the p distortion parameters in other order than us. Fixed.
