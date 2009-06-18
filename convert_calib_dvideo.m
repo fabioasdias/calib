@@ -1,4 +1,4 @@
-function [F L]=converte_calib_dvideo(Fd,Ld)
+function [F L]=convert_calib_dvideo(Fd,Ld)
 %function [F L]=converte_calib_dvideo(Fd,Ld)
 %remove os -1 nos Ld e seu correspondente no Fd
 %Tambem remove o indice no .ref (Fd)

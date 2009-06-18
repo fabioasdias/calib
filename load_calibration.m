@@ -59,6 +59,9 @@ if (calculate==1)
         F=F(:,1:4);
     end
     L=read_dat_dvideo(name_dat);
+    if (size(F,1)>size(L,1))
+        L(size(L+1,1):size(F,1),1:2)=-1;
+    end
     [F L]=convert_calib_dvideo(F,L);
 
     %performs the calibration
