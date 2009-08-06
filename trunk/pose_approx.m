@@ -2,6 +2,7 @@ function [R T]=pose_approx(c,x,X)
 %function [R T]=pose_approx(c,x,X)
 %estimates extrinsic parameters
 % REQUIRES "TRIOD" CALIBRATION PATTERN
+visualize=0;
 
 MULT=100;
 
@@ -68,7 +69,15 @@ T=nc.T;
         nc.R=mountMatrix(vector(1)/MULT,vector(2)/MULT,vector(3)/MULT);
         nc.T=vector(4:6);
         nc.RT=[nc.R nc.T];
-        sum_error=sum(sum( (projection(nc,X,1)-x).^2));
+        xu=projection(nc,X,1);
+        if (visualize==1)
+            figure(10)
+            hold off
+            plot(x(1,:),x(2,:),'ob')
+            hold on
+            plot(xu(1,:),xu(2,:),'xr')
+        end
+        sum_error=sum(sum( (xu-x).^2));
     end
 
     %error function for T1 e T2 optimization
@@ -79,6 +88,13 @@ T=nc.T;
         nc.T(2)=t12(2);
         nc.RT=[nc.R nc.T];
         xu=projection(nc,X,1);
+        if (visualize==1)
+            figure(10)
+            hold off
+            plot(x(1,:),x(2,:),'ob')
+            hold on
+            plot(xu(1,:),xu(2,:),'xr')
+        end
         mu=mean(xu');
         e=sum(sqrt((mx-mu).^2));
     end
@@ -89,7 +105,14 @@ T=nc.T;
     function e=f_t3(t3)
         nc.T(3)=t3;
         nc.RT=[nc.R nc.T];
-        xu=projection(nc,X,1);      
+        xu=projection(nc,X,1);    
+        if (visualize==1)
+            figure(10)
+            hold off
+            plot(x(1,:),x(2,:),'ob')
+            hold on
+            plot(xu(1,:),xu(2,:),'xr')
+        end
         du=max([max(xu(1,:))-min(xu(1,:)) max(xu(2,:))-min(xu(2,:))]);
         e=sum(sqrt((du-dx).^2));
     end
