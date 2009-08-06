@@ -69,7 +69,7 @@ else
     %lets try the old'n'good DLT
     disp('Using DLT - P');
     [K R T]=calibration_dlt(F,L);
-end
+ end
 
 
 if (radial==0)
