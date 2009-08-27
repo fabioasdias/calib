@@ -60,6 +60,10 @@ if (~isempty(K))
         full_otim=0;
     end
     [R T]=pose_approx(calib,L,F);
+    dlt=input('Force DLT utilization? []=no ','s');
+    if ~isempty(dlt);
+        [Ktemp R T]=calibration_dlt(F,L);
+    end
     calib.R=R;
     calib.T=T;
     calib.RT=[calib.R calib.T];
