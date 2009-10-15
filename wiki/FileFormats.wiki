@@ -40,4 +40,8 @@ Each item in separated lines:
   # KK matrix: fprintf(f,'%e ',calib.KK');
   # RT matrix: fprintf(f,'%e ',calib.RT');
   # Direct model coeff: fprintf(f,'%e %e\n',calib.dir.k(1),calib.dir.k(2));
-  # Inverse model coeff: fprintf(f,'%e %e\n',calib.inv.k(1),calib.inv.k(2)); *OPTIONAL*
+  # Direct model coeff: fprintf(f,'%e %e\n',calib.dir.p(1),calib.dir.p(2));
+  # Direct model coeff: fprintf(f,'%e %e\n',calib.dir.s(1),calib.dir.s(2));
+  # Inverse model coeff: fprintf(f,'%e %e\n',calib.inv.k(1),calib.inv.k(2));
+  # Inverse model coeff: fprintf(f,'%e %e\n',calib.inv.p(1),calib.inv.p(2));
+  # Inverse model coeff: fprintf(f,'%e %e\n',calib.inv.s(1),calib.inv.s(2));
