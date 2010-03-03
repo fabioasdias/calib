@@ -47,9 +47,7 @@ one_image_read = 0;
 
 i = 1;
 if (strcmpi(format_image,'avi')==0)
-
     while (i <= n_ima), % & (~no_image_file),
-
         if active_images(i),
 
             %fprintf(1,'Loading image %d...\n',i);
@@ -69,6 +67,7 @@ if (strcmpi(format_image,'avi')==0)
             if exist(ima_name,'file'),
 
                 fprintf(1,'%d...',i);
+                I=imread(ima_name);
 
 
                 if ~one_image_read

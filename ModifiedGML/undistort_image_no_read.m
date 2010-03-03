@@ -185,14 +185,17 @@ else
 
 
     %%% READ IN IMAGE:
-    if (strcmpi(format_image,'avi')==1)
+    if (strcmpi(format_image2,'avi')==1)
         disp(['Undistorting all frames in the video\n Undistorted video name: rect_' ima_name '\n\n']);
         mov=avifile(['rect_' ima_name]);
+        vidSource=mmreader(ima_name);
         info=aviinfo(ima_name);
+        I2=zeros(info.Height,info.Width);
         for kk=1:info.NumFrames
             fprintf(1,'%d...\n',kk);
             I=aviread(ima_name,kk);
             I=double(I.cdata);
+            
             for d=1:size(I,3)
                 I2(:,:,d) = rect(I(:,:,d),eye(3),fc,cc,kc,KK);
             end
