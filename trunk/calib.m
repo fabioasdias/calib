@@ -22,7 +22,7 @@ function varargout = calib(varargin)
 
 % Edit the above text to modify the response to help calib
 
-% Last Modified by GUIDE v2.5 11-Nov-2008 01:40:58
+% Last Modified by GUIDE v2.5 03-Mar-2010 15:07:42
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -135,4 +135,13 @@ calib=pick('clb');
 undistort_dat(dat_file,new_file,calib,0);
 %feedback
 disp('Done!');
+
+
+% --- Executes on button press in pushbutton5.
+function pushbutton5_Callback(hObject, eventdata, handles)
+% hObject    handle to pushbutton5 (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+[c1 c2]=load_stereo_calib(pick('.mat'));
+
 
