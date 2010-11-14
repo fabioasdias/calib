@@ -71,12 +71,13 @@ end;
 
 %==========================================
 % detect image points through DMoroz + OpenCV procedure
+I=imadjust(255-(imclose(I,strel('disk',20))-I));
 [XX, Xgrid] = dmCornerDetect(I, n_sq_x + 2, n_sq_y + 2);
 
 global last_position;
 if (isempty(XX)&&(~isempty(last_position)))
 
-    delta_pixels=50;
+    delta_pixels=60;
     bbox(1)=last_position(1)-delta_pixels;
     bbox(2)=last_position(2)-delta_pixels;
     bbox(3)=last_position(3)+delta_pixels;
@@ -90,7 +91,8 @@ if (isempty(XX)&&(~isempty(last_position)))
     end
     bbox=round(bbox);
     nova=imadjust(I(bbox(1):bbox(3),bbox(2):bbox(4)));
-    nova=imopen(imclose(nova,ones(3,3)),ones(3,3)); %helping the squares to look like squares
+    %nova=nova-imclose(255-nova,strel('disk',3));
+    nova=imadjust(nova);
 
     [XX, Xgrid] =dmCornerDetect(nova,n_sq_x + 2, n_sq_y + 2);
 
@@ -100,6 +102,7 @@ if (isempty(XX)&&(~isempty(last_position)))
         scale=4;
         im_aux=imresize(nova,scale,'nearest');
         im_aux=imopen(imclose(im_aux,ones(3,3)),ones(3,3));
+        im_aux(im_aux<150)=0;
         [XX, Xgrid] =dmCornerDetect(im_aux,n_sq_x + 2, n_sq_y + 2);
         %rescaling
         XX=XX/scale;
