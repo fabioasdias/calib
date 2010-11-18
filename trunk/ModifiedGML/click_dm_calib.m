@@ -92,7 +92,7 @@ if (isempty(XX)&&(~isempty(last_position)))
     bbox=round(bbox);
     nova=imadjust(I(bbox(1):bbox(3),bbox(2):bbox(4)));
     %nova=nova-imclose(255-nova,strel('disk',3));
-    nova=imadjust(nova);
+    %nova=imadjust(nova);
 
     [XX, Xgrid] =dmCornerDetect(nova,n_sq_x + 2, n_sq_y + 2);
 
@@ -102,8 +102,8 @@ if (isempty(XX)&&(~isempty(last_position)))
         scale=4;
         im_aux=imresize(nova,scale,'nearest');
         im_aux=imopen(imclose(im_aux,ones(3,3)),ones(3,3));
-        im_aux(im_aux<150)=0;
-        [XX, Xgrid] =dmCornerDetect(im_aux,n_sq_x + 2, n_sq_y + 2);
+        %im_aux(im_aux<150)=0;
+        [XX, Xgrid] =dmCornerDetect(double(im_aux),n_sq_x + 2, n_sq_y + 2);
         %rescaling
         XX=XX/scale;
     end
