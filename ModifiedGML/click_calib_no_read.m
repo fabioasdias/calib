@@ -187,6 +187,7 @@ for kk = ima_proc,
     if (strcmpi(format_image,'avi')==1)
         ima_name=[calib_name '.' format_image];
         I=aviread(ima_name,kk);
+        auxWriteSkip(ima_name,kk);
         I=double(I.cdata);
         read_ok=1;
     else
@@ -223,17 +224,23 @@ for kk = ima_proc,
         if (~exist('sowhat','var'))
             sowhat=[];
         end
+        
         disp(sprintf('_\n\n Frame %g\n',kk));
         % << Modified by DMoroz (Vezhnevets Vladimir)
         if (g_bAutoDetect)
-            click_dm_calib_noread;
+            if (auxCheckSkip(ima_name,kk)==0)
+                click_dm_calib_noread;
+                auxRemoveSkip(ima_name,kk);
+            else
+                disp(sprintf('Frame marked to skip automatic detection: %d',kk));
+                bResult=0;
+            end
+            
             if (bResult ~= 1)
 
-                if (isempty(sowhat))||((sowhat(1)~='A')&&(sowhat(1)~='a'))
-                    %desactivated_images = [desactivated_images kk];
+                if ((isempty(sowhat))|| (sowhat(1)~='A'))
+                    sowhat=upper(input('Skip frame or manual procedure? []=manual / A= skip all ','s'));
                     
-                    sowhat=input('Skip frame or manual procedure? []=manual / A= skip all ','s');%
-
                     if (isempty(sowhat))
                         fprintf(1, 'Falling back to manual.\n');
                         click_ima_calib_no_read;
