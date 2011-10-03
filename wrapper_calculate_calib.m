@@ -9,6 +9,7 @@ function [KK kc mat]=wrapper_calculate_calib(F,L,distortions)
 %lbox.html
 KK=[];
 mat=[];
+
 if ((size(F,2)/3)~=(size(L,2)/2))
     error('Incompatible vector size. Wrong number of sample images.');
 end
