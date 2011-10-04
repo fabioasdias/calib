@@ -33,8 +33,14 @@ if (radial==1)
         else
             distortions=[1;1;1;1;0];
         end
-        
-        [K Kct mat]=wrapper_calculate_calib(F,L,distortions);
+	dlt=input('Force DLT utilization? []=no ','s');
+	if ~isempty(dlt);
+          [Ktemp R T]=calibration_dlt(F,L);
+	  
+	else
+          [K Kct mat]=wrapper_calculate_calib(F,L,distortions);
+	  end
+          
     end
      %the order of p parameters is changed in the toolbox
     kct_aux=Kct(4);
@@ -60,10 +66,6 @@ if (~isempty(K))
         full_otim=0;
     end
     [R T]=pose_approx(calib,L,F);
-    dlt=input('Force DLT utilization? []=no ','s');
-    if ~isempty(dlt);
-        [Ktemp R T]=calibration_dlt(F,L);
-    end
     calib.R=R;
     calib.T=T;
     calib.RT=[calib.R calib.T];
