@@ -13,7 +13,6 @@ tam=size(F,1);
 
 A=zeros(2*tam,11);
 B=zeros(2*tam,1);
-disp('Linear DLT!');
 for ii=1:tam
     A(2*ii-1,:)=[F(ii,:) 1 0 0 0 0 -L(ii,1)*F(ii,:)];
     B(2*ii-1)=L(ii,1);

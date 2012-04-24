@@ -15,5 +15,5 @@ function [out]=pdivide(arg1,arg2)
 
 out=arg1./arg2;
 I=(out==inf);
-
+out(isnan(out))=0;
 out(I)=0;

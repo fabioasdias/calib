@@ -32,19 +32,19 @@ for i=1:gp.runcontrol.pop_size
     % (the try catch is to assign a poor fitness value
     % to trees that violate Matlab's
     % daft 'Nesting of {, [, and ( cannot exceed a depth of 32.' error.
-    try
+    %try
         [fitness,gp]=feval(gp.fitness.fitfun,evalstr,gp);
         gp.fitness.values(i)=fitness;
-    catch
-        if ~strncmpi(lasterr,'Nesting of {',12);
-            error(lasterr);
-        end
-        if gp.fitness.minimisation
-            gp.fitness.values(i)=Inf;
-        else
-            gp.fitness.values(i)=-Inf;
-        end
-    end
+    %catch
+    %    if ~strncmpi(lasterr,'Nesting of {',12);
+    %        error(lasterr);
+    %    end
+    %    if gp.fitness.minimisation
+    %        gp.fitness.values(i)=Inf;
+    %    else
+    %        gp.fitness.values(i)=-Inf;
+    %    end
+    %end
     
 
 end
