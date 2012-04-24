@@ -33,16 +33,16 @@ if (radial==1)
         else
             distortions=[1;1;1;1;0];
         end
-	dlt=input('Force DLT utilization? []=no ','s');
-	if ~isempty(dlt);
-          [Ktemp R T]=calibration_dlt(F,L);
-	  
-	else
-          [K Kct mat]=wrapper_calculate_calib(F,L,distortions);
-	  end
-          
+        dlt=input('Force DLT utilization? []=no ','s');
+        if ~isempty(dlt);
+            [Ktemp R T]=calibration_dlt(F,L);
+            
+        else
+            [K Kct mat]=wrapper_calculate_calib(F,L,distortions);
+        end
+        
     end
-     %the order of p parameters is changed in the toolbox
+    %the order of p parameters is changed in the toolbox
     kct_aux=Kct(4);
     Kct(4)=Kct(3);
     Kct(3)=kct_aux;
@@ -106,19 +106,19 @@ else
         if (isempty(kps)||(kps==0))
             %[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);mr;teta;phi;T;k1;k2];
             x0=[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);r;T;inicializa_k(Kct)*MULT];        
-            [aux  fval] = fminsearch(@fcn_dir_k,x0,optimset('MaxIter',10000,'MaxFunEvals',10000,'TolX',1e-16,'LevenbergMarquardt','on'));
+            [aux  fval] = fminsearch(@fcn_dir_k,x0,optimset('MaxIter',10000,'MaxFunEvals',10000,'TolX',1e-16));
             aux=[aux;0;0;0;0];
         else
             if (kps==1)
                 %p also
                 x0=[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);r;T;inicializa_k(Kct)*MULT;inicializa_p(Kct)*MULT];
-                [aux  fval]= fminsearch(@fcn_dir_kp,x0,optimset('MaxIter',10000,'MaxFunEvals',10000,'TolX',1e-16,'LevenbergMarquardt','on'));
+                [aux  fval]= fminsearch(@fcn_dir_kp,x0,optimset('MaxIter',10000,'MaxFunEvals',10000,'TolX',1e-16));
                 aux=[aux;0;0];
             else
                 if (kps==2)
                     % p & s
                     x0=[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);r;T;inicializa_k(Kct)*MULT;inicializa_p(Kct)*MULT;0;0];
-                    [aux  fval] = fminsearch(@fcn_dir_kps,x0,optimset('MaxIter',10000,'MaxFunEvals',10000,'TolX',1e-16,'LevenbergMarquardt','on'));
+                    [aux  fval] = fminsearch(@fcn_dir_kps,x0,optimset('MaxIter',10000,'MaxFunEvals',10000,'TolX',1e-16));
                 end
             end
         end
@@ -126,7 +126,7 @@ else
                 
     else
         x0=[r;T];
-        [aux  fval]= fminsearch(@fcn_RT,x0,optimset('MaxIter',10000,'MaxFunEvals',10000,'TolX',1e-16,'LevenbergMarquardt','on'));
+        [aux  fval]= fminsearch(@fcn_RT,x0,optimset('MaxIter',10000,'MaxFunEvals',10000,'TolX',1e-16));
         aux=[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);aux;Kct(1);Kct(2);Kct(3);Kct(4);0;0];
     end
 
@@ -196,19 +196,19 @@ if (radial==1)
         if (isempty(kps)||(kps==0))
             %[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);mr;teta;phi;T;k1;k2];
             x0=-inicializa_k(Kct);
-            [aux  fval] = fminsearch(@fcn_inv_k,x0,optimset('MaxIter',10000,'MaxFunEvals',10000,'TolX',1e-16,'LevenbergMarquardt','on'));
+            [aux  fval] = fminsearch(@fcn_inv_k,x0,optimset('MaxIter',10000,'MaxFunEvals',10000,'TolX',1e-16));
             aux=[aux;0;0;0;0];
         else
             if (kps==1)
                 %p also
                 x0=[-inicializa_k(Kct);inicializa_p(Kct)];
-                [aux  fval]= fminsearch(@fcn_inv_kp,x0,optimset('MaxIter',10000,'MaxFunEvals',10000,'TolX',1e-16,'LevenbergMarquardt','on'));
+                [aux  fval]= fminsearch(@fcn_inv_kp,x0,optimset('MaxIter',10000,'MaxFunEvals',10000,'TolX',1e-16));
                 aux=[aux;0;0];
             else
                 if (kps==2)
                     % p & s
                     x0=[-inicializa_k(Kct);inicializa_p(Kct);0;0];
-                    [aux  fval] = fminsearch(@fcn_inv_kps,x0,optimset('MaxIter',10000,'MaxFunEvals',10000,'TolX',1e-16,'LevenbergMarquardt','on'));
+                    [aux  fval] = fminsearch(@fcn_inv_kps,x0,optimset('MaxIter',10000,'MaxFunEvals',10000,'TolX',1e-16));
                 end
             end
         end
