@@ -24,10 +24,13 @@ s_jpg = size(l_jpg,1);
 l_avi = dir('*.avi');
 s_avi = size(l_avi,1);
 
-s_tot = s_ras + s_bmp + s_tif + s_pgm + s_jpg + s_ppm + s_avi;
+l_mov = dir('*.mov');
+s_mov = size(l_mov,1);
+
+s_tot = s_ras + s_bmp + s_tif + s_pgm + s_jpg + s_ppm + s_avi + s_mov;
 
 if s_tot < 1,
-    fprintf(1,'No image in this directory in either ras, bmp, tif, pgm, ppm or jpg format. Change directory and try again.\n');
+    fprintf(1,'No image in this directory in either avi, mov, ras, bmp, tif, pgm, ppm or jpg format. Change directory and try again.\n');
     break;
 end;
 
@@ -47,7 +50,7 @@ while (Nima_valid==0),
 
     while format_image == '0',
 
-        format_image =  input('Image format: ([]=''a''= ''avi'' ''r''=''ras'', ''b''=''bmp'', ''t''=''tif'', ''p''=''pgm'', ''j''=''jpg'', ''m''=''ppm'') ','s');
+        format_image =  input('Image format: ([]=''a''= ''avi'' ''r''=''ras'', ''b''=''bmp'', ''t''=''tif'', ''p''=''pgm'', ''j''=''jpg'', ''m''=''mov'') ','s');
 
         if isempty(format_image)||(lower(format_image(1)=='a'))
             format_image = 'avi';
@@ -57,7 +60,7 @@ while (Nima_valid==0),
                 format_image = 'ras';
             else
                 if lower(format_image(1)) == 'm',
-                    format_image = 'ppm';
+                    format_image = 'mov';
                 else
                     if lower(format_image(1)) == 'b',
                         format_image = 'bmp';

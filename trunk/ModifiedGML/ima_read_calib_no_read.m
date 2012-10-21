@@ -46,7 +46,7 @@ fprintf(1,'\nChecking directory content for the calibration images (no global im
 one_image_read = 0;
 
 i = 1;
-if (strcmpi(format_image,'avi')==0)
+if ((strcmpi(format_image,'avi')==0)&&(strcmpi(format_image,'mov')==0))
     while (i <= n_ima), % & (~no_image_file),
         if active_images(i),
 

@@ -38,15 +38,19 @@ if ~quest,
 
     fprintf(1,'\n');
     
+    if ((strcmpi(format_image,'avi')==1)||(strcmpi(format_image,'mov')==1))
+            ima_name=[calib_name '.' format_image];
+            Ivid=mmreader(ima_name);
+    end
+        
+    
     for kk = 1:n_ima,
 
         read_ok=0;
 
-        if (strcmpi(format_image,'avi')==1)
-            ima_name=[calib_name '.' format_image];
+        if ((strcmpi(format_image,'avi')==1)||(strcmpi(format_image,'mov')==1))
             fprintf(1,'%d...\n',kk);
-            I=aviread(ima_name,kk);
-            I=double(I.cdata);
+            I=double(read(ima_name,kk));
 
             read_ok=1;
             if (~exist('mov','var'))
@@ -147,13 +151,13 @@ else
 
     while format_image2 == '0',
 
-        format_image2 =  input('Image format: ([]=''a''=''avi'' ''r''=''ras'', ''b''=''bmp'', ''t''=''tif'', ''p''=''pgm'', ''j''=''jpg'', ''m''=''ppm'') ','s');
+        format_image2 =  input('Image format: ([]=''a''=''avi'' ''r''=''ras'', ''b''=''bmp'', ''t''=''tif'', ''p''=''pgm'', ''j''=''jpg'', ''m''=''mov'') ','s');
 
         if isempty(format_image2)||(lower(format_image2(1)=='a'))
             format_image2 = 'avi';
         else
             if lower(format_image2(1)) == 'm',
-                format_image2 = 'ppm';
+                format_image2 = 'mov';
             else
                 if lower(format_image2(1)) == 'b',
                     format_image2 = 'bmp';
@@ -185,16 +189,14 @@ else
 
 
     %%% READ IN IMAGE:
-    if (strcmpi(format_image2,'avi')==1)
+    if ((strcmpi(format_image2,'avi')==1)||(strcmpi(format_image2,'mov')==1))
         disp(['Undistorting all frames in the video\n Undistorted video name: rect_' ima_name '\n\n']);
         mov=avifile(['rect_' ima_name]);
         vidSource=mmreader(ima_name);
-        info=aviinfo(ima_name);
-        I2=zeros(info.Height,info.Width);
-        for kk=1:info.NumFrames
+        I2=zeros(vidSource.Height,vidSource.Width);
+        for kk=1:vidSource.NumFrames
             fprintf(1,'%d...\n',kk);
-            I=aviread(ima_name,kk);
-            I=double(I.cdata);
+            I=double(read(ima_name,kk));
             
             for d=1:size(I,3)
                 I2(:,:,d) = rect(I(:,:,d),eye(3),fc,cc,kc,KK);
