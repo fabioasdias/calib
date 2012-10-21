@@ -1,0 +1,4 @@
+USEUNIT(".\gmlmath.cpp");
+USEFILE("vctobpr.log");
+
+#define Library

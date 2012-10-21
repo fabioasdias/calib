@@ -179,16 +179,19 @@ if ~g_bAutoDetect
     end;
 end;
 % >> end Modified by DMoroz (Vezhnevets Vladimir)
+if ((strcmpi(format_image,'avi')==1)||(strcmpi(format_image,'mov')==1))
+    ima_name=[calib_name '.' format_image];
+    Ivid=mmreader(ima_name);
+end
 
 for kk = ima_proc,
 
     read_ok=0;
     % by F
-    if (strcmpi(format_image,'avi')==1)
-        ima_name=[calib_name '.' format_image];
-        I=aviread(ima_name,kk);
+    if ((strcmpi(format_image,'avi')==1)||(strcmpi(format_image,'mov')==1))
+        I=read(Ivid,kk);
         auxWriteSkip(ima_name,kk);
-        I=double(I.cdata);
+        I=double(I);
         read_ok=1;
     else
         if ~type_numbering,

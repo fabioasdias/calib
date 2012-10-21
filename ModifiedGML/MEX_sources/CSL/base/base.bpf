@@ -1,0 +1,15 @@
+//---------------------------------------------------------------------------
+
+#include <vcl.h>
+#pragma hdrstop
+USEUNIT("gmlstring.cpp");
+USEUNIT("gmlassert.cpp");
+USEUNIT("gmlsmartobject.cpp");
+USEUNIT("gmlsmartobject_ts.cpp");
+USEUNIT("gmllog.cpp");
+USEUNIT("gmlmemorypool.cpp");
+//---------------------------------------------------------------------------
+#define Library
+
+// To add a file to the library use the Project menu 'Add to Project'.
+

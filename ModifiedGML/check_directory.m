@@ -12,10 +12,10 @@ ind_valid = [];
 loc_extension = [];
 length_name = size(calib_name,2);
 
-if (strcmpi(format_image,'avi')==1)
+if ((strcmpi(format_image,'avi')==1)||(strcmpi(format_image,'mov')==1))
     if (exist([calib_name '.' format_image],'file'))
-        info=aviinfo([calib_name '.' format_image]);
-        n_ima=info.NumFrames;
+        Ivid=mmreader([calib_name '.' format_image]);
+        n_ima=Ivid.NumberOfFrames;
         Nima_valid=n_ima;
         image_numbers = 1:n_ima-1;
         active_images = ones(1,n_ima);
