@@ -4,6 +4,9 @@
 =Changelog summary for each release version=
 
 <wiki:toc max_depth="3" />
+== Release 75 21/10/2012==
+Added testing support to .mov files.
+
 == Release 61 06/08/2009==
 Our modified version of the GML toolbox is now available in the SVN tree. Some minor changes in the code, to improve reliability.
 
