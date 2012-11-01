@@ -73,6 +73,7 @@ template <class T> void CopyPixels(const mxArray *in_pArray, IplImage *out_pImag
   T             *pArrayData; 
   unsigned char *pImageData;
   int           iTotalElem, i, iStep = out_pImage->widthStep; 
+  //int i;
   
   pArrayData = (T *)mxGetData(in_pArray);
   pImageData = (unsigned char *)out_pImage->imageData;
@@ -220,7 +221,7 @@ void mexFunction(int nlhs, mxArray *out_pArgs[], int nrhs,const mxArray *in_pArg
     // The 3D points
     out_pArgs[1] = mxCreateDoubleMatrix(3, iCorners, mxREAL);
     pData = mxGetPr(out_pArgs[1]);
-    i = 0;
+    int i = 0;
 
     for (int iY = 0; iY < iObjYDim - 1; iY++)
       for (int iX = 0; iX < iObjXDim - 1; iX++)

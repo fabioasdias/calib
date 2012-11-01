@@ -221,7 +221,7 @@ hold off;
 
 disp('If the guessed grid corners (red crosses on the image) are not close to the actual corners,');
 disp('it is necessary to enter an initial guess for the radial distortion factor kc (useful for subpixel detection)');
-quest_distort = input('Need of an initial guess for distortion? ([]=no, other=yes) ');
+quest_distort =[];%%FF input('Need of an initial guess for distortion? ([]=no, other=yes) ');
 
 quest_distort = ~isempty(quest_distort);
 

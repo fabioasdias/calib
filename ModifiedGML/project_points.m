@@ -7,8 +7,10 @@ function [xp,dxpdom,dxpdT,dxpdf,dxpdc,dxpdk] = project_points(X,om,T,f,c,k)
 %Projects a 3D structure onto the image plane.
 %
 %INPUT: X: 3D structure in the world coordinate frame (3xN matrix for N points)
-%       (om,T): Rigid motion parameters between world coordinate frame and camera reference frame
-%               om: rotation vector (3x1 vector); T: translation vector (3x1 vector)
+%        (om,T): Rigid motion parameters between world coordinate frame and camera reference frame
+%
+%       om: rotation vector (3x1 vector); 
+%       T: translation vector (3x1 vector)
 %       f: camera focal length in units of horizontal and vertical pixel units (2x1 vector)
 %       c: principal point location in pixel units (2x1 vector)
 %       k: Distortion coefficients (radial and tangential) (4x1 vector)

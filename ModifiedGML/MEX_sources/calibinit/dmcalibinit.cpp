@@ -11,7 +11,7 @@
 //#include "stdafx.h"
 #include <stdio.h>
 #include <cv.h>
-#include <_cv.h>
+//#include <_cv.h>
 //#define DEBUG_DRAW
 #include "dmcalibinit.h"
 #include "dmcalibinternal.h"
@@ -54,7 +54,7 @@ double DQuadInfo::GetMinDim()
     dTemp = CV_SQR(m_pCorners[i]->m_vPoint.x - m_pCorners[i + 1]->m_vPoint.x) + 
             CV_SQR(m_pCorners[i]->m_vPoint.y - m_pCorners[i + 1]->m_vPoint.y);
 
-    dMin = CV_MIN(dMin, dTemp);
+    dMin = MIN(dMin, dTemp);
   }  
 
   return dMin;
@@ -194,7 +194,7 @@ CV_IMPL
 		while (iCount);
 	}
 	  
-	__CLEANUP__;
+	//__CLEANUP__;
 	__END__;
 
 	cvFree( (void **)&pQuads );
@@ -348,7 +348,7 @@ int CleanFoundConnectedQuads(int in_iQuadNum, DQuadInfo **in_ppQuadGroup, CvSize
 
 			// remove the quad
 			in_iQuadNum--;
-			for (ii = min_box_area_index; ii < in_iQuadNum; ii++)
+			for (int ii = min_box_area_index; ii < in_iQuadNum; ii++)
 				in_ppQuadGroup[ii]	= in_ppQuadGroup[ii+1];
 
 			// set that point to the center of the etalon so it will no longer affect our ConvexHull calculation
@@ -929,10 +929,10 @@ int CheckCornersCloseToLine(DQuadInfo **in_ppQuadGroup, int in_iCount, CvPoint2D
 
 bool IsLinesCross(int64 x1, int64 y1, int64 x2, int64 y2, int64 x3, int64 y3, int64 x4, int64 y4)
 {
-	int64 maxx1 = CV_MAX(x1, x2), maxy1 = CV_MAX(y1, y2);
-	int64 minx1 = CV_MIN(x1, x2), miny1 = CV_MIN(y1, y2);
-	int64 maxx2 = CV_MAX(x3, x4), maxy2 = CV_MAX(y3, y4);
-	int64 minx2 = CV_MIN(x3, x4), miny2 = CV_MIN(y3, y4);
+	int64 maxx1 = MAX(x1, x2), maxy1 = MAX(y1, y2);
+	int64 minx1 = MIN(x1, x2), miny1 = MIN(y1, y2);
+	int64 maxx2 = MAX(x3, x4), maxy2 = MAX(y3, y4);
+	int64 minx2 = MIN(x3, x4), miny2 = MIN(y3, y4);
 
 	if (minx1 > maxx2 || maxx1 < minx2 || miny1 > maxy2 || maxy1 < miny2)
 		return false;  // Момент, када линии имеют одну общую вершину...
@@ -1052,7 +1052,8 @@ int  FindQuadNeibors(DQuadInfo *in_pQuads, int in_iQuadsNum,
 				// than this one, then we don't count this one after all.
 				// This is necessary to support small squares where otherwise the wrong 
 				// corner will get matched to pMinQuad;
-				for (int ii = i+1; ii < 4; ii++)
+				int ii;
+				for (ii = i+1; ii < 4; ii++)
 				{
 					CvPoint2D32f pt = in_pQuads[idx].m_pCorners[ii]->m_vPoint;
 					int dx = (int)(pt.x - pMinQuad->m_pCorners[iMinPoint]->m_vPoint.x);
@@ -1123,7 +1124,7 @@ int  FindQuadNeibors(DQuadInfo *in_pQuads, int in_iQuadsNum,
 				}
 #endif //DEBUG_DRAW
 
-				dGlobalMinDist = CV_MIN(dGlobalMinDist, dMinDist);
+				dGlobalMinDist = MIN(dGlobalMinDist, dMinDist);
 			}
 		 NextPoint:;
 		}
