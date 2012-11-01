@@ -242,7 +242,7 @@ for kk = ima_proc,
             if (bResult ~= 1)
 
                 if ((isempty(sowhat))|| (sowhat(1)~='A'))
-                    sowhat=upper(input('Skip frame or manual procedure? []=manual / A= skip all ','s'));
+                    sowhat=[];%FFupper(input('Skip frame or manual procedure? []=manual / A= skip all ','s'));
                     
                     if (isempty(sowhat))
                         fprintf(1, 'Falling back to manual.\n');
