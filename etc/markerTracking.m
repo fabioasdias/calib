@@ -42,13 +42,12 @@ else
     gui_mainfcn(gui_State, varargin{:});
 end
 % End initialization code - DO NOT EDIT
-global vid;
-global dat;
-global frame_number;
-global nPoints;
-global curIm;
-global cirrad;
-
+global vid;          % VideoReader struct
+global dat;          % results structure
+global frame_number; %current frame number
+global nPoints;      %current number of points
+global curIm;        %current image
+global prev;         %prevision from kalman
 % --- Executes just before markerTracking is made visible.
 function markerTracking_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
@@ -91,6 +90,7 @@ global dat;
 global vid;
 global nPoints;
 global curIm;
+
 contents = cellstr(get(hObject,'String'));
 curPoint=get(hObject,'Value');
 if (isempty(nPoints))
@@ -105,14 +105,18 @@ end
 nPoints=max(nPoints,curPoint);
 if (curPoint<=size(contents,1))
     %aka clicked on last item == add marker
-    [x y]=ginput(1);
-    xt=findCenter(curIm,[x y]);
-    if isnan(xt)
-        dat(frame_number).points(curPoint).coord=[x y];
-    else
-        dat(frame_number).points(curPoint).coord=xt;
+    [x y btn]=ginput(1);
+    if (btn==1) %normal left click
+        xt=findCenter(curIm,[x y]);
+        if isnan(xt)
+            dat(frame_number).points(curPoint).coord=[x y];
+        else
+            dat(frame_number).points(curPoint).coord=xt;
+        end
     end
-    
+    if (btn==3) %right click, forcing position
+        dat(frame_number).points(curPoint).coord=[x y];
+    end
     readImage(frame_number,handles);
 end
 
@@ -120,6 +124,7 @@ function reDraw(handles)
 global dat;
 global nPoints;
 global frame_number;
+deltaDraw=75;
 if (~isempty(dat))
     hold on;
     for i=1:nPoints
@@ -127,7 +132,7 @@ if (~isempty(dat))
         y=dat(frame_number).points(i).coord(2);
         if ((x~=-1)&&(y~=-1))
             plot(x,y,'+');
-            text(x+15,y-15,sprintf('%d',i),'BackgroundColor','white');
+            text(x+deltaDraw,y-deltaDraw,sprintf('%d',i),'BackgroundColor','white');
         end
         NewCont{i}=sprintf('%d: (%03.03g,%03.03g)',i,x,y); %#ok<AGROW>
     end
@@ -307,59 +312,120 @@ global frame_number;
 global curIm;
 global keepTracking;
 global vid;
+global prev;
 
 keepTracking=1;
 curFrame=frame_number;
+
+%time to set up the kalman filters - resets every time auto tracking
+%restarts
+if (frame_number<10) %to make sure the filter initializes properly
+    nIter=100;
+else
+    nIter=1;
+end
+for p=1:nPoints
+    for ni=1:nIter
+        for i=1:frame_number
+            prev(i+1).point(p).coord=kalmanfilter(dat(i).points(p).coord',p)';
+        end
+    end
+end
 
 
 while ((keepTracking==1)&&(curFrame<=vid.NumberOfFrames))
     curFrame=curFrame+1;
     readImage(curFrame,handles);
+    toProc=zeros(1,nPoints);
+    
+    %some workarounds to make the parfor possible
+    xp=zeros(nPoints,2);
     for p=1:nPoints
-       if any(dat(curFrame).points(p).coord==-1)
-           xt=findCenter(curIm,dat(curFrame-1).points(p).coord);
-           if (~isnan(xt))
-            dat(curFrame).points(p).coord=xt;
-           end
-       end
+        if any(dat(curFrame).points(p).coord==-1)
+            toProc(p)=1;
+            xp(p,:)=kalmanfilter(dat(curFrame-1).points(p).coord',p)';
+        end
+    end
+    tIm=curIm;
+    
+    %the heavy processing
+    xt=zeros(nPoints,2);
+    parfor p=1:nPoints
+        xt(p,:)=findCenter(tIm,xp(p,:));
+    end
+    
+    %gathering results
+    for p=1:nPoints
+        if (~isnan(xt(p,:)))
+            dat(curFrame).points(p).coord=xt(p,:);
+        else
+            keepTracking=0;
+        end
     end
     reDraw(handles);
+end
+function xo=climbSearch(im,xp)
+dx=[-1  0  1  1  1  1  0 -1];
+dy=[-1 -1 -1  0  1  1  1  0];
+
+xcur=round(xp);
+didChange=1;
+while (didChange==1)
+    didChange=0;
+    for i=1:length(dy)
+        nx=xcur(1)+dx(i);
+        ny=xcur(2)+dy(i);
+        if (im(xcur(1),xcur(2))<im(nx,ny))
+            xcur=[nx ny];
+            didChange=1;
+        end
+    end
 end
 
 function xc=findCenter(im,xp)
 global frame_number;
-global keepTracking;
 delta=16; %>=16
 
 %image pre-processing - underwater images often have a low frequency noise
-im=imadjust(rgb2gray(im));
+im=rgb2gray(im);
 % wee bit of small noise removal
 im=imopen(imclose(im,strel('disk',2)),strel('disk',2));
-backIm=imclose(im,strel('disk',25));
+backIm=imclose(im,strel('disk',10));
 im=imabsdiff(im,backIm);
+
+%
+b=[[0 1/2 1 1/2 0];[1/2 1 1 1 1/2];[1 1 3/2 1 1];[1/2 1 1 1 1/2];[0 1/2 1 1/2 0]];
+im=conv2(double(im),double(b),'same');
 
 % searching box
 xp=round(xp);
-xmin=max([0 0],xp - delta);
-xmax=min([size(im,1) size(im,2)],xp+delta);%verify size>32
-imPatch=imadjust(im(xmin(2):xmax(2),xmin(1):xmax(1)));
-
+xmin=max([1 1],xp - delta);
+xmax=min([size(im,2) size(im,1)],xp+delta);%verify size>32
+imPatch=im(xmin(2):xmax(2),xmin(1):xmax(1));
+%imwrite(imPatch,sprintf('%da.png',frame_number));
+imPatch(imPatch<0.5*max(max(imPatch))*graythresh(imPatch))=0;
+%imwrite(imPatch,sprintf('%db.png',frame_number));
 %find the circle
 [~, circen, temprad] = CircularHough_Grd(imPatch,[1 20]);
 if (isempty(circen))
-    figure(5),imshow(imPatch);
-    figure(6),surf(double(imPatch));
-
-    keepTracking=0;
-    xc=nan;
+    %figure,imshow(imPatch,[]);
+    %figure,surf(double(imPatch));
+    %xc=climbSearch(imPatch,xp);
+    [a b]=find(imPatch==max(max(imPatch)));
+    xc=[a(1) b(1)]+xmin;
 else
-    %if we find multiple, try the one closest to the old center
+    %if we find multiple, try the one closest to the old center - BAD
+    % Get the one with the highest img value
     if (any(size(temprad)>1))
-        [~, ind]=min(sum(((circen+repmat(xmin,[size(temprad,1) 1]))-repmat(xp,[size(temprad,1) 1])).^2,2));
+        mVal=zeros(1,size(temprad,1));
+        for i=1:size(temprad,1)
+            mVal(i)=imPatch(round(circen(i,2)),round(circen(i,1)));
+        end
+        [~, ind]=max(mVal);
+        %[~, ind]=min(sum(((circen+repmat(xmin,[size(temprad,1) 1]))-repmat(xp,[size(temprad,1) 1])).^2,2));
     else
         ind=1;
     end
-cirrad(frame_number)=temprad(ind);
 xc=circen(ind,:)+xmin;
 end
 

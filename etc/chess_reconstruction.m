@@ -1,11 +1,22 @@
-function X=chess_reconstruction(x_left,x_right,om,T,fc_left,fc_right,cc_left,cc_right,kc_left,kc_right)
+function X=chess_reconstruction(nFrames,x_left,x_right,om,T,fc_left,fc_right,cc_left,cc_right,kc_left,kc_right)
 
 % x_left=read_dat_dvideo(pick('dat'));
 % x_right=read_dat_dvideo(pick('dat'));
 % load('Calib_Results_stereo.mat');
 
-nFrames=size(x_left,1);
+%nFrames=650;%1100;%size(x_left,1);
+x_left=x_left(1:nFrames,:,:);
+x_right=x_right(1:nFrames,:,:);
 nPoints=size(x_left,3);
+
+for p=1:nPoints
+    figure(p),subplot(2,1,1),plot(x_left(:,1,p),x_left(:,2,p),'+r');hold on;grid on;
+    x_left(:,:,p) =csaps(1:nFrames,squeeze(x_left (:,:,p))',0.05,1:nFrames)';
+    figure(p),subplot(2,1,1),plot(x_left(:,1,p),x_left(:,2,p),'ob-');hold on;grid on;
+    figure(p),subplot(2,1,2),plot(x_right(:,1,p),x_right(:,2,p),'+r');hold on;grid on;
+    x_right(:,:,p)=csaps(1:nFrames,squeeze(x_right(:,:,p))',0.05,1:nFrames)';
+    figure(p),subplot(2,1,2),plot(x_right(:,1,p),x_right(:,2,p),'ob-');hold on;grid on;
+end
 
 X=zeros(nFrames,3,nPoints);
 for f=1:nFrames
