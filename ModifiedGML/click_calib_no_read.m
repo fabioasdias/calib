@@ -242,10 +242,11 @@ for kk = ima_proc,
             if (bResult ~= 1)
 
                 if ((isempty(sowhat))|| (sowhat(1)~='A'))
-                    sowhat=[];%FFupper(input('Skip frame or manual procedure? []=manual / A= skip all ','s'));
+                    sowhat=upper(input('Skip frame or manual procedure? []=manual / A= skip all ','s'));
                     
                     if (isempty(sowhat))
                         fprintf(1, 'Falling back to manual.\n');
+                        active_images(kk)=1;
                         click_ima_calib_no_read;
                     else
                         disp(sprintf('Automatic detection failed.\nDeactivating image %d',kk));
@@ -259,6 +260,7 @@ for kk = ima_proc,
                 active_images(kk) = 1;
             end
         else
+            active_images(kk)=1;
             click_ima_calib_no_read;
         end
         % >> end Modified by DMoroz (Vezhnevets Vladimir)
