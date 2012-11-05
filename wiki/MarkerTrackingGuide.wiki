@@ -1,0 +1,29 @@
+#summary Quick guide to the markerTracking UI.
+#labels Phase-Deploy
+
+= markerTracking interface guide =
+
+== Basics ==
+The markerTracking.m/fig files implement a simple marker tracking algorithm, with support for white and black markers. It uses kalman filter to define the search area, based on the past trajectory or user initialization. It uses morphological filters to enhance the markers and a circular Hough routine, from Tao Peng, to find the circles.
+
+== Usage ==
+
+Make sure the base directory for the CaLIB is on your path, along with the lib and etc subdirectories. Run 'markerTracking' to execute the interface:
+
+https://sites.google.com/site/fabiodias/markerTrackingUI.png
+
+  # Load the video using the "Load video ..." button.
+  # Choose the color of the used marker
+  # Click on 'New marker' on the list.
+  # Select the marker's position. A number, displaced, will indicate the number of the marker. Such displacement is necessary to avoid overlapping with other markers. 
+  # Click "Start tracking"
+
+*Important*: Left click will use image processing to find the center of the marker, using the coordinates of the click as starting point. Right click will force the mouse position as result. Therefore, if clicking with the left button is yielding weird results, try right clicking.
+
+
+== Known Issues ==
+  * The button "Stop tracking" only stops the tracking a couple frames *after* the click. This is unavoidable.
+  * The automatic tracking only works if *all* the markers are not initialized. If you do one marker by hand, you need to do *all* markers by hand on that frame.
+  * There is no way (yet) of removing a marker. If you, by accident, create a new marker, the easiest way to deal with it is to save the .dat file, and then remove the columns corresponding to the extra marker. (Remember, alpha release!).
+  * If a marker is incorrectly tracked, you need to correct its trajectory manually on frames that are already tracked.
+  * Once you press "Start tracking", the tracking stops only if: 1) End of the video is reached, 2) User clicks "Stop tracking". That means that, even if the results is unbelivably wrong, the process will not stop by itself. Supervision is recommended.
