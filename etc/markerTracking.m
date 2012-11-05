@@ -22,7 +22,7 @@ function varargout = markerTracking(varargin)
 
 % Edit the above text to modify the response to help markerTracking
 
-% Last Modified by GUIDE v2.5 01-Nov-2012 13:57:56
+% Last Modified by GUIDE v2.5 05-Nov-2012 15:14:36
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -61,6 +61,12 @@ handles.output = hObject;
 
 % Update handles structure
 guidata(hObject, handles);
+base=fileparts(which('calib'));
+addpath([base '/etc']);
+addpath([base '/lib']);
+addpath([base '/ModifiedGML']);
+addpath([base '/lib/circularHough']);
+
 
 % UIWAIT makes markerTracking wait for user response (see UIRESUME)
 % uiwait(handles.form);
@@ -107,7 +113,7 @@ if (curPoint<=size(contents,1))
     %aka clicked on last item == add marker
     [x y btn]=ginput(1);
     if (btn==1) %normal left click
-        xt=findCenter(curIm,[x y]);
+        xt=findCenter(curIm,[x y],handles);
         if isnan(xt)
             dat(frame_number).points(curPoint).coord=[x y];
         else
@@ -351,7 +357,7 @@ while ((keepTracking==1)&&(curFrame<=vid.NumberOfFrames))
     %the heavy processing
     xt=zeros(nPoints,2);
     parfor p=1:nPoints
-        xt(p,:)=findCenter(tIm,xp(p,:));
+        xt(p,:)=findCenter(tIm,xp(p,:),handles);
     end
     
     %gathering results
@@ -382,15 +388,23 @@ while (didChange==1)
     end
 end
 
-function xc=findCenter(im,xp)
+function xc=findCenter(im,xp,handles)
 global frame_number;
 delta=16; %>=16
 
 %image pre-processing - underwater images often have a low frequency noise
-im=rgb2gray(im);
+if (length(size(im))==3)
+    im=rgb2gray(im);
+end
+
 % wee bit of small noise removal
-im=imopen(imclose(im,strel('disk',2)),strel('disk',2));
-backIm=imclose(im,strel('disk',10));
+if (get(handles.markColor,'Value')==0) %black marker
+    im=imopen(imclose(im,strel('disk',2)),strel('disk',2));
+    backIm=imclose(im,strel('disk',10));
+else
+   % im=imclose(imopen(im,strel('disk',2)),strel('disk',2));
+    backIm=imopen(im,strel('disk',10));
+end
 im=imabsdiff(im,backIm);
 
 %
@@ -487,3 +501,26 @@ function form_ButtonDownFcn(hObject, eventdata, handles)
 % hObject    handle to form (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on selection change in markColor.
+function markColor_Callback(hObject, eventdata, handles)
+% hObject    handle to markColor (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: contents = cellstr(get(hObject,'String')) returns markColor contents as cell array
+%        contents{get(hObject,'Value')} returns selected item from markColor
+
+
+% --- Executes during object creation, after setting all properties.
+function markColor_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to markColor (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: popupmenu controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
