@@ -4,6 +4,9 @@
 =Changelog summary for each release version=
 
 <wiki:toc max_depth="3" />
+== Release 82 05/11/2012 ==
+New utility interface for marker tracking (markerTracking), see the [http://code.google.com/p/calib/wiki/MarkerTrackingGuide markerTracking guide] for more information. Alpha stage.
+
 == Release 75 21/10/2012==
 Added testing support to .mov files. Added third party code to support evolutionary camera model (experimental).
 
