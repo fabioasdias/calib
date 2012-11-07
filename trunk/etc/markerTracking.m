@@ -22,7 +22,7 @@ function varargout = markerTracking(varargin)
 
 % Edit the above text to modify the response to help markerTracking
 
-% Last Modified by GUIDE v2.5 05-Nov-2012 15:14:36
+% Last Modified by GUIDE v2.5 06-Nov-2012 18:44:34
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -91,14 +91,16 @@ function pontos_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns pontos contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from pontos
+markNumber(get(hObject,'Value'),handles);
+
+function markNumber(curPoint,handles)
 global frame_number;
 global dat;
 global vid;
 global nPoints;
 global curIm;
 
-contents = cellstr(get(hObject,'String'));
-curPoint=get(hObject,'Value');
+contents = cellstr(get(handles.pontos,'String'));
 if (isempty(nPoints))
     nPoints=0;
 end
@@ -130,17 +132,17 @@ function reDraw(handles)
 global dat;
 global nPoints;
 global frame_number;
-deltaDraw=75;
+deltaDraw=50;
 if (~isempty(dat))
     hold on;
     for i=1:nPoints
         x=dat(frame_number).points(i).coord(1);
         y=dat(frame_number).points(i).coord(2);
         if ((x~=-1)&&(y~=-1))
-            plot(x,y,'+');
+            plot(x,y,'o');
             text(x+deltaDraw,y-deltaDraw,sprintf('%d',i),'BackgroundColor','white');
         end
-        NewCont{i}=sprintf('%d: (%03.03g,%03.03g)',i,x,y); %#ok<AGROW>
+        NewCont{i}=sprintf('%d: (%3.3f,%3.3f)',i,x,y); %#ok<AGROW>
     end
     hold off;
     NewCont={NewCont{:} 'New marker'}; %#ok<CCAT>
@@ -300,7 +302,7 @@ f=fopen(saveName,'w');
 for frame=1:vid.NumberOfFrames
     fprintf(f,'%d ',frame);
     for point=1:nPoints
-        fprintf(f,'%03.03g %03.03g ',dat(frame).points(point).coord(1),dat(frame).points(point).coord(2));
+        fprintf(f,'%f %f ',dat(frame).points(point).coord(1),dat(frame).points(point).coord(2));
     end
     fprintf(f,'\n');
 end
@@ -398,10 +400,11 @@ if (length(size(im))==3)
 end
 
 % wee bit of small noise removal
-if (get(handles.markColor,'Value')==0) %black marker
+if (get(handles.markColor,'Value')==1) %black marker
     im=imopen(imclose(im,strel('disk',2)),strel('disk',2));
     backIm=imclose(im,strel('disk',10));
-else
+end
+if (get(handles.markColor,'Value')==2) %white marker
    % im=imclose(imopen(im,strel('disk',2)),strel('disk',2));
     backIm=imopen(im,strel('disk',10));
 end
@@ -440,7 +443,8 @@ else
     else
         ind=1;
     end
-xc=circen(ind,:)+xmin;
+    %figure,imshow(imPatch,[]),hold on,plot(circen(ind,1),circen(ind,2),'+','MarkerSize',1),figure
+    xc=circen(ind,:)+xmin-[1 1];
 end
 
 
@@ -462,6 +466,7 @@ function form_KeyPressFcn(hObject, eventdata, handles)
 %	Modifier: name(s) of the modifier key(s) (i.e., control, shift) pressed
 % handles    structure with handles and user data (see GUIDATA)
 global keepTracking;
+global nPoints;
 if strcmp(eventdata.Key,'rightarrow')
    btn_forward_Callback(handles.btn_forward, eventdata, handles);
 end
@@ -470,6 +475,17 @@ if strcmp(eventdata.Key,'leftarrow')
 end
 if strcmp(eventdata.Key,'spacebar')
     keepTracking=~keepTracking;
+end
+if (strcmp(eventdata.Key,'add'))
+    markNumber(nPoints+1,handles);
+end
+key=strrep(eventdata.Key,'numpad','');
+if (size(key,2)==1)
+    if ((key<='9')&&(key>='0'))
+        if (str2double(key)<=nPoints)
+            markNumber(str2double(key),handles);
+        end
+    end
 end
 
 
@@ -484,33 +500,16 @@ dat=[];
 nPoints=0;
 nameDat=pick('dat');
 if (~isempty(nameDat))
-   tDat=textread(nameDat);
+   tDat=textread(nameDat); %#ok<*REMFF1>
    nP=floor((size(tDat,2)-1)/2);
    for i=1:size(tDat,1)
        for j=1:nP
-          dat(i).points(j).coord=squeeze(tDat(i,(2*j):(2*j)+1));
+          dat(i).points(j).coord=squeeze(tDat(i,(2*j):(2*j)+1)); %#ok<AGROW>
        end
    end
    nPoints=nP;
    reDraw(handles);
 end
-
-
-% --- Executes on mouse press over figure background.
-function form_ButtonDownFcn(hObject, eventdata, handles)
-% hObject    handle to form (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --- Executes on selection change in markColor.
-function markColor_Callback(hObject, eventdata, handles)
-% hObject    handle to markColor (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-% Hints: contents = cellstr(get(hObject,'String')) returns markColor contents as cell array
-%        contents{get(hObject,'Value')} returns selected item from markColor
 
 
 % --- Executes during object creation, after setting all properties.
