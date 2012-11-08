@@ -42,10 +42,10 @@
 
 fprintf(1,'\n\nStereo Calibration script (for more info, try help calib_stereo)\n\n');
 
-if (exist('Calib_Results_left.mat')~=2)|(exist('Calib_Results_right.mat')~=2),
-    fprintf(1,'Error: Need the left and right calibration files Calib_Results_left.mat and Calib_Results_right.mat to run stereo calibration\n');
-    return;
-end;
+% if (exist('Calib_Results_left.mat')~=2)|(exist('Calib_Results_right.mat')~=2),
+%     fprintf(1,'Error: Need the left and right calibration files Calib_Results_left.mat and Calib_Results_right.mat to run stereo calibration\n');
+%     return;
+% end;
 
 if ~exist('recompute_intrinsic_right'),
     recompute_intrinsic_right = 1;
@@ -60,7 +60,7 @@ fprintf(1,'Loading the left camera calibration result file Calib_Results_left.ma
 
 clear calib_name
 
-load Calib_Results_left;
+load(pick('mat'));% Calib_Results_left;
 
 fc_left = fc;
 cc_left = cc;
@@ -117,7 +117,7 @@ fprintf(1,'Loading the right camera calibration result file Calib_Results_right.
 
 clear calib_name
 
-load Calib_Results_right;
+load(pick('mat'));% Calib_Results_right;
 
 fc_right = fc;
 cc_right = cc;
@@ -170,7 +170,7 @@ end;
 
 om_ref_list = [];
 T_ref_list = [];
-for ii = 1:length(om_left_list),
+for ii = 1:min(length(om_left_list),length(om_right_list))
     % Align the structure from the first view:
     R_ref = rodrigues(om_right_list(:,ii)) * rodrigues(om_left_list(:,ii))';
     T_ref = T_right_list(:,ii) - R_ref * T_left_list(:,ii);
@@ -273,7 +273,7 @@ history = [];
 fprintf(1,'\nMain stereo calibration optimization procedure - Number of pairs of images: %d\n',length(find(active_images)));
 fprintf(1,'Gradient descent iteration: ');
     
-for iter = 1:12;
+for iter = 1:20;
     
     
     fprintf(1,'%d...',iter);
