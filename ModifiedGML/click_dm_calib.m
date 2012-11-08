@@ -111,8 +111,8 @@ if (isempty(XX)&&(~isempty(last_position)))
     if (~isempty(XX))
         disp('Sucessful!');
         %adjusting measurements
-        XX(1,:)=XX(1,:)+bbox(2);
-        XX(2,:)=XX(2,:)+bbox(1);
+        XX(1,:)=XX(1,:)+bbox(2)-1;
+        XX(2,:)=XX(2,:)+bbox(1)-1;
     else
         disp('Sorry. Maybe the pattern is not visible. Moving on...');
     end
@@ -134,8 +134,8 @@ if (isempty(XX))
         bbox=round(props(id).BoundingBox);
 
         % the last 2 are offsets
-        bbox(3)=bbox(3)+bbox(1);
-        bbox(4)=bbox(4)+bbox(2);
+        bbox(3)=bbox(3)+bbox(1)-1;
+        bbox(4)=bbox(4)+bbox(2)-1;
         %cropping the image
         if ((all(bbox>0))&&(bbox(4)<=size(I,1))&&(bbox(3)<=size(I,2)))
             [XX, Xgrid] =...
@@ -148,8 +148,8 @@ if (isempty(XX))
     if (~isempty(XX))
         disp('Sucessful!');
         %adjusting measurements
-        XX(1,:)=XX(1,:)+bbox(1);
-        XX(2,:)=XX(2,:)+bbox(2);
+        XX(1,:)=XX(1,:)+bbox(1)-1;
+        XX(2,:)=XX(2,:)+bbox(2)-1;
     else
         disp('Sorry. Maybe the pattern is not visible. Moving on...');
     end

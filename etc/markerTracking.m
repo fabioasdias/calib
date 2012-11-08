@@ -173,6 +173,8 @@ global frame_number;
 global dat;
 global nameVid;
 global nPoints;
+global range;
+range=[];
 dat=[];
 nPoints=0;
 nameVid=pick();
@@ -206,11 +208,24 @@ function readImage(curFrame,handles)
 global vid;
 global frame_number;
 global curIm;
+persistent cache;
+global range;
+nCache=50; %loads nCache images
 hold off;
 curFrame=round(curFrame);
+
+if (isempty(range))
+    range=[-1; -1];
+end
+
 if ((curFrame>=1)&&(curFrame<=vid.NumberOfFrames))
+    if ((curFrame<range(1))||(curFrame>range(2))) %frame is *not* on cache
+        range(1)=max(1,curFrame);
+        range(2)=min(vid.NumberOfFrames,curFrame+nCache);
+        cache=read(vid,range);
+    end
+    curIm=squeeze(cache(:,:,:,curFrame-range(1)+1));
     frame_number=curFrame;
-    curIm=read(vid,curFrame);
     image(curIm);
     set(handles.slider,'Value',curFrame);
     set(handles.nFrame,'String',sprintf('%g',curFrame));
@@ -344,15 +359,11 @@ end
 while ((keepTracking==1)&&(curFrame<=vid.NumberOfFrames))
     curFrame=curFrame+1;
     readImage(curFrame,handles);
-    toProc=zeros(1,nPoints);
     
     %some workarounds to make the parfor possible
     xp=zeros(nPoints,2);
     for p=1:nPoints
-        if any(dat(curFrame).points(p).coord==-1)
-            toProc(p)=1;
-            xp(p,:)=kalmanfilter(dat(curFrame-1).points(p).coord',p)';
-        end
+        xp(p,:)=kalmanfilter(dat(curFrame-1).points(p).coord',p)';
     end
     tIm=curIm;
     
