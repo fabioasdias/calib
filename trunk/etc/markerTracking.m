@@ -22,7 +22,7 @@ function varargout = markerTracking(varargin)
 
 % Edit the above text to modify the response to help markerTracking
 
-% Last Modified by GUIDE v2.5 06-Nov-2012 18:44:34
+% Last Modified by GUIDE v2.5 19-Nov-2012 03:40:37
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -47,7 +47,11 @@ global dat;          % results structure
 global frame_number; %current frame number
 global nPoints;      %current number of points
 global curIm;        %current image
+global nFrames;    % number of frames, workaround
+global dispIm;       % display (scaled) version
 global prev;         %prevision from kalman
+global rad;          %measured circle radius
+global imScale;      % displayed image scale
 % --- Executes just before markerTracking is made visible.
 function markerTracking_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
@@ -91,22 +95,33 @@ function pontos_Callback(hObject, eventdata, handles)
 
 % Hints: contents = cellstr(get(hObject,'String')) returns pontos contents as cell array
 %        contents{get(hObject,'Value')} returns selected item from pontos
-markNumber(get(hObject,'Value'),handles);
+global dat;
+global frame_number;
+if (get(handles.c_erase,'Value'))
+    dat(frame_number).points(get(hObject,'Value')).coord=[-1 -1];
+    reDraw(handles);
+    set(handles.c_erase,'Value',0);
+else
+    markNumber(get(hObject,'Value'),handles);
+end
 
 function markNumber(curPoint,handles)
 global frame_number;
 global dat;
-global vid;
+global nFrames;
 global nPoints;
 global curIm;
+global rad;
+global imScale;
 
 contents = cellstr(get(handles.pontos,'String'));
 if (isempty(nPoints))
     nPoints=0;
 end
 if (nPoints<curPoint)
-    for f=1:vid.NumberOfFrames
+    for f=1:nFrames
         dat(f).points(curPoint).coord=[-1 -1];
+        rad(f).points(curPoint).rad=-1;
     end
 end
 
@@ -114,12 +129,19 @@ nPoints=max(nPoints,curPoint);
 if (curPoint<=size(contents,1))
     %aka clicked on last item == add marker
     [x y btn]=ginput(1);
+    x=imScale*x;
+    y=imScale*y;
     if (btn==1) %normal left click
-        xt=findCenter(curIm,[x y],handles);
-        if isnan(xt)
-            dat(frame_number).points(curPoint).coord=[x y];
+        if ((y<0)||(x<0))
+            dat(frame_number).points(curPoint).coord=[-1 -1];
         else
-            dat(frame_number).points(curPoint).coord=xt;
+            [xt r]=findCenter(filterImage(curIm,handles),[x y],handles);
+            if isnan(xt)
+                dat(frame_number).points(curPoint).coord=[x y];
+            else
+                dat(frame_number).points(curPoint).coord=xt;
+                rad(frame_number).points(curPoint).rad=r;
+            end
         end
     end
     if (btn==3) %right click, forcing position
@@ -130,17 +152,18 @@ end
 
 function reDraw(handles)
 global dat;
+global imScale;
 global nPoints;
 global frame_number;
-deltaDraw=50;
+deltaDraw=100;
 if (~isempty(dat))
     hold on;
     for i=1:nPoints
         x=dat(frame_number).points(i).coord(1);
         y=dat(frame_number).points(i).coord(2);
         if ((x~=-1)&&(y~=-1))
-            plot(x,y,'o');
-            text(x+deltaDraw,y-deltaDraw,sprintf('%d',i),'BackgroundColor','white');
+            plot(x/imScale,y/imScale,'o');
+            text((x+deltaDraw)/imScale,(y-deltaDraw)/imScale,sprintf('%d',i),'BackgroundColor','white');
         end
         NewCont{i}=sprintf('%d: (%3.3f,%3.3f)',i,x,y); %#ok<AGROW>
     end
@@ -169,11 +192,13 @@ function btn_load_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 global vid;
+global nFrames;
 global frame_number;
 global dat;
 global nameVid;
 global nPoints;
 global range;
+global imScale;
 range=[];
 dat=[];
 nPoints=0;
@@ -181,35 +206,55 @@ nameVid=pick();
 if ~isempty(nameVid)
     %reads the first frame
     vid=VideoReader(nameVid);
+    nFrames=vid.NumberOfFrames;
+    if (isempty(nFrames))
+        nFrames=input('Unable to determine number of frames, please inform:');
+    end
     im=read(vid,1);
-    
+    if (size(im,1)>480)
+        imScale=2;
+        im=imresize(im,1/2);
+    else
+        imScale=1;
+    end
+    set(handles.tScale,'String',sprintf('Scale: %g',imScale));
     %resizes the window
     pos=get(handles.im,'Position');
     pos(3)=size(im,2);
     pos(4)=size(im,1);
     set(handles.im,'Position',pos);
     janela=get(handles.form,'Position');
-    if (pos(3)+pos(1))>janela(1)
+
+    if ( (pos(3)+pos(1))>janela(3) )
         janela(3)=pos(3)+pos(1)+50;
-        set(handles.form,'Position',janela);
     end
     
-    frame_number=1;
+    if ((pos(4)+pos(1))>janela(4))
+        janela(4)=pos(4)+pos(1)+50;
+        %pos(2)=janela(4)-pos(4)-50;
+        %set(handles.im,'Position',pos);
+    end
+    set(handles.form,'Position',janela);
+    
+    frame_number=-1;
     
     %display the image
     readImage(1,handles);
     
     %sets the slider range
     set(handles.slider,'Min',1);
-    set(handles.slider,'Max',vid.NumberOfFrames);
+    set(handles.slider,'Max',nFrames);
 end
 
 function readImage(curFrame,handles)
 global vid;
 global frame_number;
 global curIm;
+global dispIm;
 persistent cache;
 global range;
+global nFrames;
+global imScale;
 nCache=50; %loads nCache images
 hold off;
 curFrame=round(curFrame);
@@ -218,17 +263,29 @@ if (isempty(range))
     range=[-1; -1];
 end
 
-if ((curFrame>=1)&&(curFrame<=vid.NumberOfFrames))
-    if ((curFrame<range(1))||(curFrame>range(2))) %frame is *not* on cache
-        range(1)=max(1,curFrame);
-        range(2)=min(vid.NumberOfFrames,curFrame+nCache);
-        cache=read(vid,range);
+if ((curFrame>=1)&&(curFrame<=nFrames))
+    if (curFrame~=frame_number)
+        if (isempty(cache)||((curFrame<range(1))||(curFrame>range(2)))) %frame is *not* on cache
+            range(1)=max(1,curFrame);
+            range(2)=min(nFrames,curFrame+nCache);
+            cache=read(vid,range);
+        end
+        curIm=squeeze(cache(:,:,:,curFrame-range(1)+1));
+        dispIm=imresize(curIm,1/imScale);
+        frame_number=curFrame;
+        set(handles.slider,'Value',curFrame);
+        set(handles.nFrame,'String',sprintf('%g',curFrame));
     end
-    curIm=squeeze(cache(:,:,:,curFrame-range(1)+1));
-    frame_number=curFrame;
-    image(curIm);
-    set(handles.slider,'Value',curFrame);
-    set(handles.nFrame,'String',sprintf('%g',curFrame));
+    if (get(handles.c_gray,'Value'))
+        if (length(size(curIm))==3)
+            image(repmat(imadjust(rgb2gray(dispIm)),[1 1 3]));
+        else
+            image(imadjust(dispIm));
+        end
+    else
+        image(dispIm);
+    end
+    
     reDraw(handles);
 end
 
@@ -304,9 +361,10 @@ function btn_save_Callback(hObject, eventdata, handles)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
 global nameVid;
-global vid;
+global nFrames;
 global dat;
 global nPoints;
+global rad;
 tempName=strrep(nameVid, nameVid((size(nameVid,2)-2):(size(nameVid,2))),'dat');
 saveName=input(sprintf('Prefix for the .dat file: ([]=%s)',tempName),'s');
 if (isempty(saveName))
@@ -314,14 +372,19 @@ if (isempty(saveName))
 end
 
 f=fopen(saveName,'w');
-for frame=1:vid.NumberOfFrames
-    fprintf(f,'%d ',frame);
+fr=fopen(strrep(saveName,'dat','rad'),'w'); %file with the circle radius
+for frame=1:nFrames
+    fprintf(f ,'%d ',frame);
+    fprintf(fr,'%d ',frame);
     for point=1:nPoints
-        fprintf(f,'%f %f ',dat(frame).points(point).coord(1),dat(frame).points(point).coord(2));
+        fprintf(f ,'%f %f ',dat(frame).points(point).coord(1),dat(frame).points(point).coord(2));
+        fprintf(fr,'%f ',rad(frame).points(point).rad);
     end
-    fprintf(f,'\n');
+    fprintf(f ,'\n');
+    fprintf(fr,'\n');
 end
 fclose(f);
+fclose(fr);
 
 
 % --- Executes on button press in btn_start.
@@ -334,8 +397,14 @@ global nPoints;
 global frame_number;
 global curIm;
 global keepTracking;
-global vid;
+global nFrames;
 global prev;
+global rad;
+
+maxFrame=input('Track until frame number: ([]=whole video) ');
+if (isempty(maxFrame))
+    maxFrame=nFrames;
+end
 
 keepTracking=1;
 curFrame=frame_number;
@@ -356,7 +425,7 @@ for p=1:nPoints
 end
 
 
-while ((keepTracking==1)&&(curFrame<=vid.NumberOfFrames))
+while ((keepTracking==1)&&(curFrame<=nFrames)&&(curFrame<=maxFrame))
     curFrame=curFrame+1;
     readImage(curFrame,handles);
     
@@ -365,63 +434,63 @@ while ((keepTracking==1)&&(curFrame<=vid.NumberOfFrames))
     for p=1:nPoints
         xp(p,:)=kalmanfilter(dat(curFrame-1).points(p).coord',p)';
     end
-    tIm=curIm;
+    tIm=filterImage(curIm,handles);
     
     %the heavy processing
     xt=zeros(nPoints,2);
+    r=zeros(nPoints,1);
     parfor p=1:nPoints
-        xt(p,:)=findCenter(tIm,xp(p,:),handles);
+        [xt(p,:) r(p)]=findCenter(tIm,xp(p,:),handles);
     end
+
+%        figure,imshow(tIm);hold on;
+%        plot(xt(:,1), xt(:,2),'o');figure
+
     
     %gathering results
     for p=1:nPoints
         if (~isnan(xt(p,:)))
             dat(curFrame).points(p).coord=xt(p,:);
+            rad(curFrame).points(p).rad=r(p);
         else
             keepTracking=0;
         end
     end
     reDraw(handles);
 end
-function xo=climbSearch(im,xp)
-dx=[-1  0  1  1  1  1  0 -1];
-dy=[-1 -1 -1  0  1  1  1  0];
 
-xcur=round(xp);
-didChange=1;
-while (didChange==1)
-    didChange=0;
-    for i=1:length(dy)
-        nx=xcur(1)+dx(i);
-        ny=xcur(2)+dy(i);
-        if (im(xcur(1),xcur(2))<im(nx,ny))
-            xcur=[nx ny];
-            didChange=1;
-        end
-    end
-end
-
-function xc=findCenter(im,xp,handles)
-global frame_number;
-delta=16; %>=16
-
+function rIm=filterImage(im,handles)
 %image pre-processing - underwater images often have a low frequency noise
-if (length(size(im))==3)
-    im=rgb2gray(im);
-end
+%t=tic;
+%if (length(size(im))==3)
+%    im=rgb2gray(im);
+%end
 
 % wee bit of small noise removal
 if (get(handles.markColor,'Value')==1) %black marker
+    if (length(size(im))==3)
+        im=max(im,[],3);
+    end
     im=imopen(imclose(im,strel('disk',2)),strel('disk',2));
     backIm=imclose(im,strel('disk',10));
 end
 if (get(handles.markColor,'Value')==2) %white marker
-   % im=imclose(imopen(im,strel('disk',2)),strel('disk',2));
+    if (length(size(im))==3)
+        im=min(im,[],3);
+    end
+    im=imclose(imopen(im,strel('disk',2)),strel('disk',2));
     backIm=imopen(im,strel('disk',10));
 end
-im=imabsdiff(im,backIm);
+rIm=imabsdiff(im,backIm);
+%sprintf('filterimg')
+%toc(t)
+    
+function [xc r]=findCenter(im,xp,handles)
+global frame_number;
+delta=16; %>=16
 
 %
+%t=tic;
 b=[[0 1/2 1 1/2 0];[1/2 1 1 1 1/2];[1 1 3/2 1 1];[1/2 1 1 1 1/2];[0 1/2 1 1/2 0]];
 im=conv2(double(im),double(b),'same');
 
@@ -441,6 +510,7 @@ if (isempty(circen))
     %xc=climbSearch(imPatch,xp);
     [a b]=find(imPatch==max(max(imPatch)));
     xc=[a(1) b(1)]+xmin;
+    r=-1;
 else
     %if we find multiple, try the one closest to the old center - BAD
     % Get the one with the highest img value
@@ -456,8 +526,9 @@ else
     end
     %figure,imshow(imPatch,[]),hold on,plot(circen(ind,1),circen(ind,2),'+','MarkerSize',1),figure
     xc=circen(ind,:)+xmin-[1 1];
+    r=temprad(ind);
 end
-
+%sprintf('findCenter'),toc(t)
 
 
 % --- Executes on button press in btn_stop.
@@ -478,6 +549,7 @@ function form_KeyPressFcn(hObject, eventdata, handles)
 % handles    structure with handles and user data (see GUIDATA)
 global keepTracking;
 global nPoints;
+global frame_number;
 if strcmp(eventdata.Key,'rightarrow')
    btn_forward_Callback(handles.btn_forward, eventdata, handles);
 end
@@ -489,6 +561,9 @@ if strcmp(eventdata.Key,'spacebar')
 end
 if (strcmp(eventdata.Key,'add'))
     markNumber(nPoints+1,handles);
+end
+if (strcmp(eventdata.Key,'r'))
+    readImage(frame_number,handles);
 end
 key=strrep(eventdata.Key,'numpad','');
 if (size(key,2)==1)
@@ -534,3 +609,31 @@ function markColor_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- If Enable == 'on', executes on mouse press in 5 pixel border.
+% --- Otherwise, executes on mouse press in 5 pixel border or over pontos.
+function pontos_ButtonDownFcn(hObject, eventdata, handles)
+% hObject    handle to pontos (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --- Executes on button press in c_erase.
+function c_erase_Callback(hObject, eventdata, handles)
+% hObject    handle to c_erase (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of c_erase
+
+
+% --- Executes on button press in c_gray.
+function c_gray_Callback(hObject, eventdata, handles)
+% hObject    handle to c_gray (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of c_gray
+global frame_number;
+readImage(frame_number,handles);

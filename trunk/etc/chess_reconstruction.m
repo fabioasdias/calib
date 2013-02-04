@@ -24,11 +24,11 @@ for f=1:nFrames
     for p=1:nPoints
         xlc=x_left(f,:,p)';
         xrc=x_right(f,:,p)';
-        X(f,:,p)=fminsearch(@fcn_opt,[1;1;1],optimset('MaxFunEvals',1E6));
+        X(f,:,p)=fsolve(@fcn_opt,[1;1;1],optimset('MaxFunEvals',1E6,'Algorithm','levenberg-marquardt','TolFun',1e-26));%,'TolX',1e-6));
     end
 end
 
-save temp
+save temp1
 
     function err=fcn_opt(Xt)
        xl=project_points2(Xt,[0 0 0]',[0 0 0]',fc_left,cc_left,kc_left,0);
