@@ -11,7 +11,7 @@ buf=textread(nome_arq);
 
 %vamos excluir o primeiro número - numero do quadro
 buf=buf(:,2:end);
-L=zeros(size(buf,1),2,size(buf,2)/2);
+L=zeros(size(buf,1),2,ceil(size(buf,2)/2));
 for i=1:size(buf,1)
     for j=1:size(buf,2)/2
         L(i,:,j)=buf(i,(j*2-1):(j*2));
