@@ -9,6 +9,18 @@ function [fval x_best]=calibration_gp(F,L,model)
 %distortions in the optimizations
 MULT=10;
 
+a=1;
+for i=1:size(F,1)
+    if (L(i,1)>0)
+        Fl(a,:)=F(i,:);
+        Ll(a,:)=L(i,:);
+        a=a+1;
+    end
+end
+
+F=Fl;
+L=Ll;
+
 [K R T]=calibration_dlt(F,L);
 
 %% makes the model 'eval'luable
