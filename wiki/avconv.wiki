@@ -1,0 +1,29 @@
+#summary A quick howto on video conversion using libav
+
+= Install =
+
+== Linux ==
+Install libav packages from your preferred source.
+
+== Windows == 
+Download the proper version from: 
+http://win32.libav.org/releases/
+
+(probably the highest version number for 64 bits)
+
+Extract the files to a "good" place (like program files) and put the usr/bin subdirectory on the path. It obeys the cygwin structure, but it also works directly. Make sure the bin directory is on the path.
+
+
+= Conversion =
+
+This is a command line tool. It is very, very simple, but does not have the usual frills from visual applications.
+
+First, open a command line prompt and go to the directory containing the videos to be converted. Then:
+
+avconv -i input.xxx -c:v mjpeg -an out.avi
+
+Where
+  * input.xxx = original video
+  * -c:v mjpeg : use the codec mjpeg for video (avconv -codecs lists all available codecs)
+  * -an : Remove audio stream
+  * out.avi : output video
