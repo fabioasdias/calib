@@ -20,10 +20,11 @@ This is a command line tool. It is very, very simple, but does not have the usua
 
 First, open a command line prompt and go to the directory containing the videos to be converted. Then:
 
-avconv -i input.xxx -c:v mjpeg -an out.avi
+avconv -i input.xxx -c:v mjpeg -an -q 1 out.avi
 
 Where
   * input.xxx = original video
   * -c:v mjpeg : use the codec mjpeg for video (avconv -codecs lists all available codecs)
   * -an : Remove audio stream
+  * -q 1 : Quality parameter maximum
   * out.avi : output video
