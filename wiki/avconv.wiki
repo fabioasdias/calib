@@ -11,16 +11,32 @@ http://win32.libav.org/releases/
 
 (probably the highest version number for 64 bits)
 
-Extract the files to a "good" place (like program files) and put the usr/bin subdirectory on the path. It obeys the cygwin structure, but it also works directly. Make sure the bin directory is on the path.
 
+Extract the files into a directory (in your desktop, for instance). Inside, on 64bit versions, you will find a win64 dir. Inside it (or directly inside the zip if you are using a 32bits version), you will find a dir called 'usr', and inside it 'bin'. Rename the 'bin' dir 'libAV' and cut (ctrl+x) it.
 
+Then go to 'c:\Program Files\' (or another directory with the same function) and paste. You will probably get a administrative warning, just click continue.
+
+The software is installed. It isn't the usual (or recommended) way, but, so far, it is working. Now we have to add that directory to the 'path' variable, so the executable can be found. To do that, go to the Control Panel, system and security, then system. In the new window, click on "Advanced system settings". Then go to "Environment Variables". On the System variables section, find path and add "c:\Program Files\libAV\" to the end of it, using ';' to separate items. 
+(additional info: http://www.howtogeek.com/118594/how-to-edit-your-system-path-for-easy-command-line-access/ ).
+
+---
 = Conversion =
 
 This is a command line tool. It is very, very simple, but does not have the usual frills from visual applications.
 
 First, open a command line prompt and go to the directory containing the videos to be converted. Then:
 
+{{{
 avconv -i input.xxx -c:v mjpeg -an -q 1 out.avi
+}}}
+
+If you want to do it inside matlab, first go to the directory that 
+contains the file and execute:
+
+{{{
+system('avconv -i input.xxx -c:v mjpeg -an -q 1 out.avi')
+}}}
+
 
 Where
   * input.xxx = original video
