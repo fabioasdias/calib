@@ -18,10 +18,13 @@ https://sites.google.com/site/fabiodias/markerTrackingUI.png
   # Select the marker's position. A number, displaced, will indicate the number of the marker. Such displacement is necessary to avoid overlapping with other markers,
   # Click "Start tracking".
 
-*Important*: Left click will use image processing to find the center of the marker, using the coordinates of the click as starting point. Right click will force the mouse position as result. Therefore, if clicking with the left button is yielding weird results, try right clicking.
+*Important*: Left click will use image processing to find the center of the marker, using the coordinates of the click as starting point. Right click will force the mouse position as result. Therefore, if clicking with the left button is yielding weird results, try right clicking. First, if you are getting weird results, check if you selected the right type of marker.
 
 
-=== Two buttons that do not appear on the screenshot ===
+=== Two options that do not appear on the screenshot ===
+
+Both are checkboxes placed under the list of points.
+
   * Erase: If you select erase then click on a point on the list, that point goes to (-1 -1).
   * Grayscale: Enhances the constrast (imadjust) of the grayscale image before processing.
 
@@ -30,4 +33,4 @@ https://sites.google.com/site/fabiodias/markerTrackingUI.png
   * If you play the video frame by frame (clicking on the '>' button, for instance), the frames sometimes jump to a few seconds earlier on the video. This is a bug in VideoReader that occurs when you read a video frame by frame.
   * The button "Stop tracking" only stops the tracking a couple frames *after* the click. This is unavoidable.
   * There is no way (yet) of removing a marker. If you, by accident, create a new marker, the easiest way to deal with it is to save the .dat file, and then remove the columns corresponding to the extra marker. (Remember, alpha release!).
-  * Once you press "Start tracking", the tracking stops only if: 1) End frame is reached, 2) User clicks "Stop tracking". That means that, even if the results is unbelievably wrong, the process will not stop by itself. Supervision is recommended.
+  * Once you press "Start tracking", the tracking stops only if: 1) End frame is reached, 2) User clicks "Stop tracking". That means that, even if the results is unbelievably wrong, the process will not stop by itself. *Supervision is recommended*.
