@@ -10,7 +10,7 @@
 
 //#include "stdafx.h"
 #include <stdio.h>
-#include <cv.h>
+#include <opencv/cv.h>
 //#include <_cv.h>
 //#define DEBUG_DRAW
 #include "dmcalibinit.h"

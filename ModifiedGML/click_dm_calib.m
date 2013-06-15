@@ -71,90 +71,8 @@ end;
 
 %==========================================
 % detect image points through DMoroz + OpenCV procedure
-I=imadjust(255-(imclose(I,strel('disk',20))-I));
+%I=imadjust(255-(imclose(I,strel('disk',20))-I));
 [XX, Xgrid] = dmCornerDetect(I, n_sq_x + 2, n_sq_y + 2);
-
-global last_position;
-if (isempty(XX)&&(~isempty(last_position)))
-
-    delta_pixels=60;
-    bbox(1)=last_position(1)-delta_pixels;
-    bbox(2)=last_position(2)-delta_pixels;
-    bbox(3)=last_position(3)+delta_pixels;
-    bbox(4)=last_position(4)+delta_pixels;
-    bbox(bbox<1)=1;
-    if (bbox(4)>size(I,2))
-        bbox(4)=size(I,2);
-    end
-    if (bbox(3)>size(I,1))
-        bbox(3)=size(I,1);
-    end
-    bbox=round(bbox);
-    nova=imadjust(I(bbox(1):bbox(3),bbox(2):bbox(4)));
-    %nova=nova-imclose(255-nova,strel('disk',3));
-    %nova=imadjust(nova);
-
-    [XX, Xgrid] =dmCornerDetect(nova,n_sq_x + 2, n_sq_y + 2);
-
-    %last shot
-    if (isempty(XX))
-        %lets try again in a zoomed image
-        scale=4;
-        im_aux=imresize(nova,scale,'nearest');
-        im_aux=imopen(imclose(im_aux,ones(3,3)),ones(3,3));
-        %im_aux(im_aux<150)=0;
-        [XX, Xgrid] =dmCornerDetect(double(im_aux),n_sq_x + 2, n_sq_y + 2);
-        %rescaling
-        XX=XX/scale;
-    end
-
-    if (~isempty(XX))
-        disp('Sucessful!');
-        %adjusting measurements
-        XX(1,:)=XX(1,:)+bbox(2)-1;
-        XX(2,:)=XX(2,:)+bbox(1)-1;
-    else
-        disp('Sorry. Maybe the pattern is not visible. Moving on...');
-    end
-
-end
-
-%¨lets try one more time, with a smaller image
-% this if tries to find a smaller image, including only the pattern
-if (isempty(XX))
-    disp('Automatic normal detection failed.');
-    disp('Trying to find a sub-image including the pattern.');
-    %finding the bounding box of the whitest areas
-    %    I=double(imadjust(uint8(I)));
-    props=regionprops(bwlabel(roicolor(I,200,255)),'BoundingBox','Area');
-
-    if (~isempty(props))
-        areas=[props.Area];
-        [valor id]=max(areas);
-        bbox=round(props(id).BoundingBox);
-
-        % the last 2 are offsets
-        bbox(3)=bbox(3)+bbox(1)-1;
-        bbox(4)=bbox(4)+bbox(2)-1;
-        %cropping the image
-        if ((all(bbox>0))&&(bbox(4)<=size(I,1))&&(bbox(3)<=size(I,2)))
-            [XX, Xgrid] =...
-            dmCornerDetect((I(bbox(2):bbox(4),bbox(1):bbox(3))>150), n_sq_x + 2, n_sq_y + 2);
-            %[XX, Xgrid]=dmCornerDetect(...
-            %    imclose(imopen((I(bbox(2):bbox(4),bbox(1):bbox(3)))>(255*graythresh(I(bbox(2):bbox(4),bbox(1):bbox(3)))),ones(3,3)),ones(3,3)),...
-            %    n_sq_x + 2, n_sq_y + 2);
-        end
-    end
-    if (~isempty(XX))
-        disp('Sucessful!');
-        %adjusting measurements
-        XX(1,:)=XX(1,:)+bbox(1)-1;
-        XX(2,:)=XX(2,:)+bbox(2)-1;
-    else
-        disp('Sorry. Maybe the pattern is not visible. Moving on...');
-    end
-
-end
 
 
 n_corners_x = n_sq_x + 1;
@@ -165,7 +83,6 @@ if (size(XX, 2) ~= n_corners_x * n_corners_y)
     return;
 end;
 
-last_position=round([min(XX(2,:)) min(XX(1,:)) max(XX(2,:)) max(XX(1,:))]);
 
 % reverse rows of the found corners for Z axis to point 'up'
 XXTemp = reshape(XX, 2, n_corners_x, n_corners_y);

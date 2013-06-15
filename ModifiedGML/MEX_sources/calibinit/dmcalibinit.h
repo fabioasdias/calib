@@ -12,7 +12,7 @@
 	<a href="mailto:pgruebele@cox.net">pgruebele@cox.net</a>
 */ 
 
-#include <cv.h>
+#include <opencv/cv.h>
 
 /** @defgroup Exported
     @{

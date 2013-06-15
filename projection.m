@@ -5,7 +5,6 @@ function im=projection(calib,real,radial)
 %calib: calibration (load_calibration)
 %radial: 0/1 uses radial coefficients
 
-
 %%
 % if the parameter is not provided, assume 1
 if (~exist('radial','var'))

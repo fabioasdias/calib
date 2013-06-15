@@ -13,6 +13,7 @@ MULT=100;
 K=[];
 if (radial==1)
     previous=input('Import calibration data from another toolbox? []=none ','s');
+
     
     if (~isempty(previous))
         previous=pick('mat');
@@ -36,7 +37,6 @@ if (radial==1)
         dlt=input('Force DLT utilization? []=no ','s');
         if ~isempty(dlt);
             [Ktemp R T]=calibration_dlt(F,L);
-            
         else
             [K Kct mat]=wrapper_calculate_calib(F,L,distortions);
         end
@@ -65,7 +65,16 @@ if (~isempty(K))
     else
         full_otim=0;
     end
-    [R T]=pose_approx(calib,L,F);
+    
+    %    [R T]=pose_approx(calib,L,F);
+    [K1, R, T]=calibration_dlt(F,L);
+%    x0=[rodrigues(R); T]; %make sure makes sense for your setup
+%    sprintf('Using x0= '),sprintf('%g ',x0)
+%    [aux  fval]= fminsearch(@fcn_RT,x0,optimset('MaxIter',10000,'MaxFunEvals',10000,'TolX',1e-16));
+%    R=rodrigues(aux(1:3));
+%    T=aux(4:6);
+    %aux=[K(1,1);K(1,2);K(1,3);K(2,2);K(2,3);K(3,3);aux;Kct(1);Kct(2);Kct(3);Kct(4);0;0];
+ 
     calib.R=R;
     calib.T=T;
     calib.RT=[calib.R calib.T];
