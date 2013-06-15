@@ -1,7 +1,8 @@
 #pragma once
-#include "CV.h"
-#include "highgui.h"
-#include "cvaux.h"
+#include <opencv/cv.h>
+#include <opencv/highgui.h>
+#include <opencv/cvaux.h>
+
 
 class Utility
 {

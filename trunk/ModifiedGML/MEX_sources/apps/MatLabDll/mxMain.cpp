@@ -1,11 +1,11 @@
 /* $Revision: 1.2 $ */
 #include "mex.h" 
-#include <cv.h>
-#include <highgui.h>
+#include <opencv/cv.h>
+#include <opencv/highgui.h>
 #include <vector>
-#include <CSL/base/gmlcommon.h> 
-#include <CSL/math/gmlmath.h>
-#include <calibinit/dmcalibinit.h>
+#include "../../CSL/base/gmlcommon.h"
+#include "../../CSL/math/gmlmath.h"
+#include "../../calibinit/dmcalibinit.h" 
 
 //=======================================================================
 //= Function name	: mexFunction

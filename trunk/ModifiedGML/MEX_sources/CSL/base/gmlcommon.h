@@ -43,8 +43,6 @@
 #endif
 #endif
 
-#define NULL 0
-
 typedef unsigned char BYTE;
 typedef unsigned short WORD;
 typedef unsigned long DWORD;

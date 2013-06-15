@@ -213,11 +213,9 @@ for kk = ima_proc,
         end
     end
     if (read_ok==1)
-        if size(I,3)>1,
-            I = 0.299 * I(:,:,1) + 0.5870 * I(:,:,2) + 0.114 * I(:,:,3);
-        end;
-        I=imadjust(uint8(I));
-
+        if (length(size(I))==3)
+            I=rgb2gray(I);
+        end
 
         [ny,nx,junk] = size(I);
         Wcal = nx; % to avoid errors later
