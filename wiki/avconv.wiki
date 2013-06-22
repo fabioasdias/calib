@@ -39,19 +39,19 @@ system('avconv -i input.xxx -c:v mjpeg -an -q 2 out.avi')
 
 
 Where
-  * input.xxx = original video
-  * -c:v mjpeg : use the codec mjpeg for video (avconv -codecs lists all available codecs)
-  * -an : Remove audio stream
-  * -q 2 : Quality parameter: maximum (this parameter is somewhat weird)
-  * out.avi : output video
+  * `input.xxx` = original video
+  * `-c:v mjpeg` : use the codec mjpeg for video (avconv -codecs lists all available codecs)
+  * `-an` : Remove audio stream
+  * `-q 2` : Quality parameter: maximum (this parameter is somewhat weird)
+  * `out.avi` : output video
 
 A few handy options:
-  * -r HZ: Sets the output framerate. Ex: `-r 29.97`.
-  * -filter:v yadif: Deinterlaces the video.
+  * `-r HZ`: Sets the output framerate. Ex: `-r 29.97`.
+  * `-filter:v yadif` : Deinterlaces the video.
  
 = Using h264 =
 
-The codec h/x 264 is one of the best available codecs and it is used natively in many cameras. It can be used in matlab, by installing the x264vfw codec from http://sourceforge.net/projects/x264vfw/files/ (Remember to install the x64 version for the 64bits matlab) and replacing "mjpeg" by "libx264" on the avconv parameter list.
+The codec h/x 264 is one of the best available codecs and it is used natively in many cameras. It can be used in matlab, by installing the x264vfw codec from http://sourceforge.net/projects/x264vfw/files/ (Remember to install the x64 version for the 64bits matlab) and replacing `mjpeg` by `libx264` on the avconv parameter list.
 
 = Troubleshoot =
   * If you are getting a weird frame count, pass the framerate parameter with an appropriate frequency, for instance `-r 29.97` for an original video with 29.97 hz.
