@@ -16,7 +16,7 @@ To make the toolbox functional:
   * Make sure that all needed data files (.dat/.ref *not* the .m) are in the *current* matlab directory.
   * *Do not* mix different versions of the toolbox!
 
-*Important:* Adopt the Y axis (second value in each point) as _vertical_ axis. The third value (Z) must be the distance from the camera. Otherwise, J.B. Toolbox will not work properly.
+~~*Important:* Adopt the Y axis (second value in each point) as _vertical_ axis. The third value (Z) must be the distance from the camera. Otherwise, J.B. Toolbox will not work properly.~~ (Weirdly enough, it does work).
 
 http://fabio.dias.googlepages.com/calib_inicial.png
 
